@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Engine Files">
+      <UniqueIdentifier>{77d0a8ae-8e2e-415b-81d9-a581e6c4c8ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine Files\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Engine Files\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Engine Files\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="QBert Files">
+      <UniqueIdentifier>{bb418df4-8aca-48ba-815f-8362e2466302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QBert Files\Source Files">
+      <UniqueIdentifier>{66265bf9-e649-40d1-b435-d2e8bbdc39b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="QBert Files\Header FIles">
+      <UniqueIdentifier>{0425ddb6-2f71-4fe9-a61d-e9ffa269e995}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

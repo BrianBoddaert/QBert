@@ -1,5 +1,6 @@
 #include "MiniginPCH.h"
-#include <catch.hpp>
+#include "../Catch2/catch.hpp"
+
 #include "ResourceManager.h"
 
 using namespace dae;
