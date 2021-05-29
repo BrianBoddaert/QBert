@@ -1,8 +1,6 @@
-#include "MiniginPCH.h"
 
 #include "TransformComponent.h"
-#include "FPSComponent.h"
-#include "HealthComponent.h"
+
 #include "RenderComponent.h"
 #include "TextComponent.h"
 

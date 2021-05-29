@@ -1,8 +1,5 @@
-#include "MiniginPCH.h"
 #include "Subject.h"
 
-#include "HealthComponent.h"
-#include "ScoreComponent.h"
 
 dae::Subject::Subject()
 	:m_ObserverCount{ 0 }, m_pObservers{nullptr}

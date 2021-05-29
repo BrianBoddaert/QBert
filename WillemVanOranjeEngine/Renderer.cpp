@@ -1,4 +1,9 @@
-#include "MiniginPCH.h"
+#include <iostream> // std::cout
+#include <sstream> // stringstream
+#include <memory> // smart pointers
+#include <vector>
+#include <windows.h>
+
 #include "Renderer.h"
 #include "SceneManager.h"
 #include "Texture2D.h"

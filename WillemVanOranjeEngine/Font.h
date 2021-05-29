@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 struct _TTF_Font;
 namespace dae

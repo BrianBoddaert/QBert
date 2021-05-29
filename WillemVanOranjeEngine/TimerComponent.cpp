@@ -1,4 +1,4 @@
-#include "MiniginPCH.h"
+#include <iostream>
 #include "TimerComponent.h"
 
 dae::TimerComponent::TimerComponent()

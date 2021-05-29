@@ -1,4 +1,4 @@
-#include "MiniginPCH.h"
+#include <iostream>
 #include <SDL_ttf.h>
 #include "Font.h"
 

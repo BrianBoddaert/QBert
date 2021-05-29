@@ -1,7 +1,6 @@
 #pragma once
 #include "Singleton.h"
 #include "Command.h"
-
 #include <map>
 #include <vector>
 #include <iostream>

@@ -1,4 +1,9 @@
 #pragma once
+
+#include <iostream>
+#include <memory>
+#include <vector>
+
 #include "Singleton.h"
 
 namespace dae

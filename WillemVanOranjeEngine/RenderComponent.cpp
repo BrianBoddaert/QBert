@@ -1,4 +1,3 @@
-#include "MiniginPCH.h"
 #include "RenderComponent.h"
 #include "Renderer.h"
 #include "TransformComponent.h"

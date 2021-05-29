@@ -1,4 +1,4 @@
-#include "MiniginPCH.h"
+#include <iostream>
 #include "TransformComponent.h"
 
 using namespace dae;

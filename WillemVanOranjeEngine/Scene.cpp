@@ -1,9 +1,7 @@
-#include "MiniginPCH.h"
+#include <iostream>
 #include "Scene.h"
 #include "SceneManager.h"
-#include "Scene.h"
-#include "PlayerComponent.h"
-#include "MoveComponent.h"
+
 using namespace dae;
 
 Scene::Scene(const std::string& name) : m_Name(name) {}
@@ -31,16 +29,16 @@ void Scene::Update(float deltaT)
 
 void Scene::Render() const
 {
-	for (const auto& player : m_pPlayers)
-	{
-		if (player->GetComponent<MoveComponent>()->GetIsFallingToDeathBehindMap())
-			player->Render();
-	}
+	//for (const auto& player : m_pPlayers)
+	//{
+	//	if (player->GetComponent<MoveComponent>()->GetIsFallingToDeathBehindMap())
+	//		player->Render();
+	//}
 	m_CurrentMap->Render();
 
 	for (const auto& player : m_pPlayers)
 	{
-		if (!player->GetComponent<MoveComponent>()->GetIsFallingToDeathBehindMap())
+		//if (!player->GetComponent<MoveComponent>()->GetIsFallingToDeathBehindMap())
 			player->Render();
 	}
 	for (const auto& object : m_Objects)
