@@ -32,7 +32,7 @@ namespace dae
 		static glm::vec2 m_PlayerSpawn;
 		QBertSprite m_CurrentSprite;
 		bool m_MoveInputsActive[long(MoveInputDirections::Count)];
-		
+
 	};
 
 

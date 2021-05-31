@@ -9,7 +9,7 @@ FPSComponent::FPSComponent()
 }
 
 FPSComponent::FPSComponent(TextComponent* textComp)
-	:m_pTextComponent{textComp}
+	:m_pTextComponent{ textComp }
 {
 }
 void FPSComponent::Update(float deltaT)

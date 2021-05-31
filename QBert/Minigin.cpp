@@ -33,6 +33,7 @@
 
 #include "LivesObserver.h"
 #include "ScoreObserver.h"
+#include "LevelCompleteObserver.h"
 
 #include <Xinput.h>
 #include <glm\vec2.hpp>
@@ -45,7 +46,7 @@ float dae::Minigin::MsPerUpdate = 0.02f;
 
 void dae::Minigin::Initialize()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		throw std::runtime_error(std::string("SDL_Init_Video Error: ") + SDL_GetError());
 
 
@@ -56,7 +57,7 @@ void dae::Minigin::Initialize()
 	int chunkSize = 2048;
 	int channels = 2;
 
-	if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, chunkSize) < 0 )
+	if (Mix_OpenAudio(frequency, MIX_DEFAULT_FORMAT, channels, chunkSize) < 0)
 		throw std::runtime_error(std::string("SDL_Audio Error: ") + Mix_GetError());
 
 	//Mix_Music* bgm = Mix_LoadMUS("music.mp3"); // Wav, mp3 both work
@@ -71,7 +72,7 @@ void dae::Minigin::Initialize()
 		SDL_WINDOW_OPENGL
 	);
 
-	if (m_Window == nullptr) 
+	if (m_Window == nullptr)
 	{
 		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
@@ -84,7 +85,7 @@ void dae::Minigin::Initialize()
 
 	//ServiceLocator::GetSoundSystem().QueueSound(MusicId::Ambient,0.3f);
 //	Mix_Music* music = Mix_LoadMUS("../Data/mortalkombat.mp3"); // Wav, mp3 both work
-	
+
 	//ServiceLocator::GetSoundSystem().QueueSound(AudioId::Fire, 1.0f);
 
 }
@@ -102,10 +103,10 @@ void dae::Minigin::AssignKeys()
 		input.AssignControllerKey<PauseCommand>(ControllerButton::TriggerLeft, i);
 		//input.AssignControllerKey<DieCommand>(ControllerButton::LeftThumbStickUp, i);
 		input.AssignControllerKey<IncreasePointsCommand>(ControllerButton::RightThumbStickUp, i);
-		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickUp,   i,(int)MoveInputDirections::Up);
-		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickLeft, i,(int)MoveInputDirections::Left);
-		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickRight,i,(int)MoveInputDirections::Right);
-		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickDown, i,(int)MoveInputDirections::Down);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickUp, i, (int)MoveInputDirections::Up);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickLeft, i, (int)MoveInputDirections::Left);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickRight, i, (int)MoveInputDirections::Right);
+		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickDown, i, (int)MoveInputDirections::Down);
 
 		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonUp, i, (int)MoveInputDirections::Up);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonLeft, i, (int)MoveInputDirections::Left);
@@ -163,6 +164,7 @@ void dae::Minigin::LoadGame() const
 		//250,200
 		const glm::vec2 highestCubePos = { windowSurface->w / 2, windowSurface->h / 2 };
 		map->AddComponent(new MapComponent(scene, highestCubePos));
+		map->AddWatcher(new LevelCompleteObserver());
 		scene.SetCurrentMap(map);
 	}
 	{
@@ -182,22 +184,22 @@ void dae::Minigin::LoadGame() const
 		font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
 		auto livesCounter = new TextComponent("Remaining lives: 3", font);
 		livesDisplay->AddComponent(livesCounter);
-		
+
 		scene.Add(livesDisplay);
 
 		auto player = std::make_shared<GameObject>("Player1");
 		PlayerComponent* playerComponent = new PlayerComponent();
-	
+
 		player->AddComponent(playerComponent);
 
 		SDL_Rect playerSrcRect = { 0,0,16,16 };
-		const glm::vec2 playerHalfSize = {8,8};
+		const glm::vec2 playerHalfSize = { 8,8 };
 		player->AddComponent(new RenderComponent(playerSrcRect));
 		player->SetTexture("Textures/Qbert.png");
 
 		const glm::vec2 playerPos = { windowSurface->w / 2 + playerHalfSize.x, windowSurface->h / 2 - playerHalfSize.y };
 		PlayerComponent::SetPlayerSpawn(playerPos);
-		
+
 		player->AddComponent(new TransformComponent(playerPos, 1.0f));
 		//player->SetPosition(playerPos.x, playerPos.y);
 
@@ -232,7 +234,7 @@ void dae::Minigin::Cleanup()
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(m_Window);
 
- 
+
 	m_Window = nullptr;
 	Mix_Quit();
 	SDL_Quit();
@@ -247,7 +249,7 @@ void dae::Minigin::Run()
 	ResourceManager::GetInstance().Init("../Data/");
 	AssignKeys();
 	LoadGame();
-	
+
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
@@ -281,7 +283,7 @@ void dae::Minigin::Run()
 		auto sleepTime = duration_cast<duration<float>>(currentTime + milliseconds(MsPerFrame) - high_resolution_clock::now());
 		this_thread::sleep_for(sleepTime);
 	}
-	
+
 	audioThread.detach();
 	Cleanup();
 }

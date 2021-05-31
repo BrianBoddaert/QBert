@@ -14,7 +14,7 @@ void dae::MoveCommand::Execute(const int& dir)
 
 	auto player = SceneManager::GetInstance().GetCurrentScene().get()->GetPlayer(playerIndex);
 	const auto& playerComp = player.get()->GetComponent<PlayerComponent>();
-	playerComp->SetMoveInput(MoveInputDirections(dir),true);
+	playerComp->SetMoveInput(MoveInputDirections(dir), true);
 }
 
 void dae::MoveCommand::Release(const int& dir)

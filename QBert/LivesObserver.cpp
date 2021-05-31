@@ -20,13 +20,12 @@ void dae::LivesObserver::OnNotify(const GameObject* actor, Event event)
 void dae::LivesObserver::Unlock(const GameObject* actor)
 {
 	std::shared_ptr<SceneObject> livesDisplay = nullptr;
-	
+
 	if (actor->GetName() == "Q*Bert1")
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer1");
 
 	if (actor->GetName() == "Q*Bert2")
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer2");
-
 
 	TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
 	if (transformComp)
@@ -81,7 +80,7 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 		std::cout << "WARNING: timerComponent of playerDiedPopup not found after player death" << std::endl;
 		return;
 	}
-	
+
 	timerComponent->SetTimerEnabled(3.0f);
 
 }

@@ -25,7 +25,7 @@ void dae::HealthComponent::Die()
 	m_Lives--;
 
 	if (m_pGameObject->GetComponent<PlayerComponent>())
-	m_pGameObject->Notify(Event::ActorDied);
+		m_pGameObject->Notify(Event::ActorDied);
 }
 
 void dae::HealthComponent::Respawn()

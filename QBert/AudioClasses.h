@@ -17,7 +17,7 @@ namespace dae
 		Fire,
 		Fart
 	};
-	
+
 	enum class MusicId
 	{
 		Ambient
@@ -42,7 +42,7 @@ namespace dae
 		virtual void AddSoundToLibrary(const EffectId&, const std::string&) = 0;
 		virtual void AddSoundToLibrary(const MusicId&, const std::string&) = 0;
 		virtual void Update() = 0;
-		virtual void TogglePause()=0;
+		virtual void TogglePause() = 0;
 	protected:
 		virtual void Play(const EffectId&, float = 1.0f) = 0;
 		virtual void Play(const MusicId&, float = 1.0f) = 0;
@@ -98,15 +98,15 @@ namespace dae
 			m_QueueActive.notify_one();
 		}
 
-	 void AddSoundToLibrary(const EffectId& soundId, const std::string& path) override
-	 {
-	 	m_SoundLibrary.insert(std::pair<EffectId, Mix_Chunk*>(soundId, Mix_LoadWAV(path.c_str())));
-	 }
+		void AddSoundToLibrary(const EffectId& soundId, const std::string& path) override
+		{
+			m_SoundLibrary.insert(std::pair<EffectId, Mix_Chunk*>(soundId, Mix_LoadWAV(path.c_str())));
+		}
 
-	 void AddSoundToLibrary(const MusicId& soundId, const std::string& path) override
-	 {
-		 m_MusicLibrary.insert(std::pair<MusicId, Mix_Music*>(soundId, Mix_LoadMUS(path.c_str())));
-	 }
+		void AddSoundToLibrary(const MusicId& soundId, const std::string& path) override
+		{
+			m_MusicLibrary.insert(std::pair<MusicId, Mix_Music*>(soundId, Mix_LoadMUS(path.c_str())));
+		}
 
 		void Update() override
 		{
@@ -202,7 +202,7 @@ namespace dae
 		void AddSoundToLibrary(const MusicId&, const std::string&) override {};
 		void TogglePause() override {};
 	};
-	 
+
 	class LoggingSoundSystem final : public SoundSystem
 	{
 	public:
@@ -252,7 +252,7 @@ namespace dae
 		~LoggingSoundSystem() override { delete m_pRealSoundSystem; };
 
 		//void ToggleMute() { m_Muted = !m_Muted; };
-		void TogglePause() override 
+		void TogglePause() override
 		{
 			m_pRealSoundSystem->TogglePause();
 		};

@@ -1,4 +1,4 @@
- #pragma once
+#pragma once
 #include "Component.h"
 #include <memory>
 
@@ -15,7 +15,7 @@ namespace dae
         FPSComponent(TextComponent*);
         void Update(float deltaT) override;
         std::string GetFPSAsString() const;
-    private:   
+    private:
         float m_Fps;
         TextComponent* m_pTextComponent = nullptr; // OPTIONAL DISPLAY
     };

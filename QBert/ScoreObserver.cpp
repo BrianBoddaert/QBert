@@ -10,14 +10,14 @@
 void dae::ScoreObserver::OnNotify(const GameObject* actor, Event event)
 {
 	if (event == Event::CatchSlickOrSam || event == Event::CoilyHitWithFlyingDisc || event == Event::ColorChanged || event == Event::DiscLeftAtEndOfTheStage || event == Event::ScoreSet)
-	Unlock(actor);
+		Unlock(actor);
 }
 
 void dae::ScoreObserver::Unlock(const GameObject* actor)
 {
 
 	std::shared_ptr<SceneObject> pointsDisplay = nullptr;
-	
+
 	if (actor->GetName() == "Q*Bert1")
 		pointsDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("ScoreDisplayPlayer1");
 

@@ -17,15 +17,20 @@ namespace dae
 		void Render(const glm::vec2&, const glm::vec2&) const override;
 		std::shared_ptr<Cube> GetCube(int index) { return m_Cubes[index]; }
 		bool GetNextCubeIndex(int& currentIndex, const QBertSprite& dir) const; // Returns false if the player jumps off the map
+		bool LevelCompleteCheck() const;
+		void SetLevelFinished(bool value) { m_LevelFinished = value; }
 
 	private:
 		void Initialize(Scene& scene);
 		void CreateMap(Scene& scene);
 		void CreateCube(const size_t& index, const glm::vec2& pos, Scene& scene);
-		
-		int GetColumnNumber(const int& currentTileIndex) const;
-	private:
 
+		int GetColumnNumber(const int& currentTileIndex) const;
+
+
+
+	private:
+		void NextMap();
 		const static int m_MaxCubes = 28;
 
 		const int m_FirstRowCubeCount;
@@ -39,6 +44,12 @@ namespace dae
 		int m_MostRightBlocks[m_SideLength];
 		int m_LowestBlocks[m_SideLength];
 		std::shared_ptr<Cube> m_Cubes[m_MaxCubes];
+
+		bool m_LevelFinished;
+		float m_TileColorFlashTimer;
+		float m_TileColorFlashDuration;
+		int m_LevelFinishedColorChangeCount;
+		int m_LevelFinishedColorChangeLimit;
 
 	};
 

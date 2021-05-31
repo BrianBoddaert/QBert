@@ -5,7 +5,7 @@
 using namespace dae;
 
 
-glm::vec2 PlayerComponent::m_PlayerSpawn = {0,0};
+glm::vec2 PlayerComponent::m_PlayerSpawn = { 0,0 };
 
 PlayerComponent::PlayerComponent()
 	:m_CurrentSprite{ QBertSprite::DownRight }
@@ -18,7 +18,7 @@ void PlayerComponent::Initialize()
 
 }
 
-void PlayerComponent::SetMoveInput(const MoveInputDirections& dir,bool on)
+void PlayerComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
 {
 	m_MoveInputsActive[int(dir)] = on;
 }
