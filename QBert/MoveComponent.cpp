@@ -43,7 +43,7 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
 
 
 
-    const auto& CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
+    MapComponent* CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
 
     if (!CurrentMap->GetNextCubeIndex(m_CurrentCubeIndex, dir))
     {
@@ -108,6 +108,7 @@ void MoveComponent::Jump(float deltaT)
         // Direction - 1 = not jumping version of sprite
         int NonJumpingSprite = (int)m_Direction - 1;
         renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)renderComp->GetSpritePixelSize().x,0,(int)renderComp->GetSpritePixelSize().x,(int)renderComp->GetSpritePixelSize().y });
+
         CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true);
         m_IsMoving = false;
     }

@@ -26,6 +26,7 @@ MapComponent::MapComponent(Scene& scene, const glm::vec2& highestCubePos)
 	, m_TileColorFlashDuration{ 0.3f }
 	, m_LevelFinishedColorChangeLimit{ 8 }
 	, m_LevelFinishedColorChangeCount{ 0 }
+	, m_CurrentLevel{Level::LevelOne}
 {
 
 	int mostLeftBlockIndex = 0;
@@ -112,7 +113,7 @@ void MapComponent::CreateCube(const size_t& index, const glm::vec2& pos, Scene&)
 	float scale = GAMESCALE;
 	gameObj->AddComponent(new TransformComponent(pos, scale));
 	gameObj->AddComponent(new RenderComponent(m_CubeSrcRect));
-	gameObj->SetTexture("Textures/Qbert.png");
+	gameObj->SetTexture("Textures/Qbert2.png");
 
 }
 
@@ -203,6 +204,7 @@ void MapComponent::Update(float deltaT)
 
 void MapComponent::NextMap()
 {
+	m_CurrentLevel = Level(int(m_CurrentLevel)+1);
 	InputManager::GetInstance().LockInput(false);
 	m_LevelFinished = false;
 	m_LevelFinishedColorChangeCount = 0;

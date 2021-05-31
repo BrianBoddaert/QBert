@@ -4,28 +4,78 @@
 #include "RenderComponent.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "MapComponent.h"
+
 using namespace dae;
 
 Cube::Cube(int id)
 	:m_Id{ id }
 	, m_Activated{ false }
 	, m_CurrentColor{ CubeColor::Red }
+	, m_IntermediateActivated{ false }
 {
 	m_pGameObject = std::make_shared<GameObject>(("Cube" + std::to_string(id)));
 }
 
 void Cube::SetActivated(bool activate)
 {
-	if (activate && !m_Activated)
+	MapComponent* CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
+
+	if (CurrentMap->GetCurrentLevel() == MapComponent::Level::LevelOne)
 	{
-		m_Activated = activate;
-		SetColorNext(activate);
-		SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+		if (activate && !m_Activated)
+		{
+			m_Activated = activate;
+			SetColorNext(activate);
+			SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+		}
+		else if (!activate && m_Activated)
+		{
+			m_Activated = activate;
+			SetColorNext(activate);
+		}
 	}
-	else if (!activate && m_Activated)
+	else if (CurrentMap->GetCurrentLevel() == MapComponent::Level::LevelTwo)
 	{
-		m_Activated = activate;
-		SetColorNext(activate);
+		if (!m_IntermediateActivated && activate)
+		{
+			m_IntermediateActivated = true;
+			SetColorNext(activate);
+		}
+		else if (activate && !m_Activated && m_IntermediateActivated)
+		{
+			m_Activated = activate;
+			SetColorNext(activate);
+			SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+		}
+		else if (!activate && m_Activated)
+		{
+			m_Activated = activate;
+			m_IntermediateActivated = activate;
+			SetColorNext(activate);
+		}
+	}
+	else if (CurrentMap->GetCurrentLevel() == MapComponent::Level::LevelThree)
+	{
+		if (activate)
+		{
+			m_Activated = !m_Activated;
+
+			if (m_Activated)
+			{
+				SetColorNext(true);
+				SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+			}
+
+			else if (!m_Activated)
+				SetColorNext(false);
+
+		}
+		else if (!activate && m_Activated)
+		{
+			m_Activated = activate;
+			SetColorNext(activate);
+		}
 	}
 
 

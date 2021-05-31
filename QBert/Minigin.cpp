@@ -129,8 +129,8 @@ void dae::Minigin::LoadGame() const
 
 	{
 		auto go = std::make_shared<GameObject>("Background");
-		go->AddComponent(new RenderComponent());
-		go->SetTexture("background.jpg");
+		//go->AddComponent(new RenderComponent());
+
 		go->AddComponent(new TransformComponent());
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
 		auto textComp = new TextComponent("FPS", font);
@@ -195,7 +195,7 @@ void dae::Minigin::LoadGame() const
 		SDL_Rect playerSrcRect = { 0,0,16,16 };
 		const glm::vec2 playerHalfSize = { 8,8 };
 		player->AddComponent(new RenderComponent(playerSrcRect));
-		player->SetTexture("Textures/Qbert.png");
+		player->SetTexture("Textures/Qbert2.png");
 
 		const glm::vec2 playerPos = { windowSurface->w / 2 + playerHalfSize.x, windowSurface->h / 2 - playerHalfSize.y };
 		PlayerComponent::SetPlayerSpawn(playerPos);

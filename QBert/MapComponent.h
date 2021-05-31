@@ -11,6 +11,12 @@ namespace dae
 	class MapComponent final : public Component
 	{
 	public:
+		enum class Level
+		{
+			LevelOne,
+			LevelTwo,
+			LevelThree
+		};
 		MapComponent(Scene& scene, const glm::vec2& highestCubePos);
 		const glm::vec2& GetCubeOffset() const;
 		void Update(float) override;
@@ -19,7 +25,7 @@ namespace dae
 		bool GetNextCubeIndex(int& currentIndex, const QBertSprite& dir) const; // Returns false if the player jumps off the map
 		bool LevelCompleteCheck() const;
 		void SetLevelFinished(bool value) { m_LevelFinished = value; }
-
+		const Level& GetCurrentLevel() const { return m_CurrentLevel; };
 	private:
 		void Initialize(Scene& scene);
 		void CreateMap(Scene& scene);
@@ -32,7 +38,7 @@ namespace dae
 	private:
 		void NextMap();
 		const static int m_MaxCubes = 28;
-
+		Level m_CurrentLevel;
 		const int m_FirstRowCubeCount;
 		const int m_CubeColumnCount;
 		const SDL_Rect m_CubeSrcRect;

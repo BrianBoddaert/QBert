@@ -37,6 +37,7 @@ private:
 	std::shared_ptr<dae::GameObject> m_pGameObject;
 
 	bool m_Activated;
+	bool m_IntermediateActivated;
 	const int m_Id;
 };
 
