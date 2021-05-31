@@ -19,6 +19,12 @@ TransformComponent::TransformComponent()
 
 }
 
+void TransformComponent::SetPosition(const glm::vec2& pos)
+{
+	m_Position.x = pos.x;
+	m_Position.y = pos.y;
+}
+
 void TransformComponent::SetPosition(const float x, const float y)
 {
 	m_Position.x = x;

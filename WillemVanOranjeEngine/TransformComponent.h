@@ -12,6 +12,7 @@ namespace dae
 		TransformComponent(const glm::vec2& pos, float scale = 1.0f);
 		TransformComponent();
 		const glm::vec2& GetPosition() const;
+		void SetPosition(const glm::vec2& pos);
 		void SetPosition(float x, float y);
 
 		const glm::vec2& GetScale() const;

@@ -99,7 +99,10 @@ namespace dae
 			// -1 = keyboard controller
 		}
 
+		void LockInput(bool lock = true) { m_InputLocked = lock; }
+
 	private:
+		bool m_InputLocked;
 		std::unique_ptr <KeyboardController> m_KeyboardController;
 		const ControllerButton m_ControllerButtons[(long)ControllerButton::Count];
 
