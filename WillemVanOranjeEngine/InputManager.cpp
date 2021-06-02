@@ -16,8 +16,6 @@ dae::InputManager::InputManager()
 
 bool dae::InputManager::ProcessInput()
 {
-    if (m_InputLocked)
-        return true;
 
     ControllerInput();
     return KeyboardInput();
