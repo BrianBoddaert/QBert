@@ -5,10 +5,17 @@
 
 namespace dae
 {
+	enum class GameMode
+	{
+		SinglePlayer,
+		CoOp,
+		Versus
+	};
+
 	class SceneObject;
 	class Scene
 	{
-		friend Scene& SceneManager::CreateScene(const std::string& name);
+		friend Scene& SceneManager::CreateScene(const std::string& name,const int gameMode);
 	public:
 		void Add(const std::shared_ptr<SceneObject>& object);
 
@@ -30,10 +37,12 @@ namespace dae
 		void SetCurrentMap(const std::shared_ptr<GameObject>&);
 		std::shared_ptr<GameObject> GetCurrentMap() const;
 
+		const GameMode& GetGameMode() const { return m_GameMode; };
 	private: 
-		explicit Scene(const std::string& name);
+		explicit Scene(const std::string& name, const GameMode& gameMode);
 
-		std::string m_Name;
+		const GameMode m_GameMode;
+		const std::string m_Name;
 		std::vector< std::shared_ptr<GameObject>> m_pPlayers{};
 
 		std::vector < std::shared_ptr<SceneObject>> m_Objects{};

@@ -21,26 +21,41 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 {
 	std::shared_ptr<SceneObject> livesDisplay = nullptr;
 
-	if (actor->GetName() == "Q*Bert1")
+	if (actor->GetName() == "Player1")
+	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer1");
+		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
+		if (transformComp)
+		{
+			const auto& playerSpawn = actor->GetComponent<PlayerComponent>()->GetPlayerSpawn();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+		}
+		else
+		{
+			std::cout << "WARNING: transformComp not found on player after player death" << std::endl;
+		}
+	}
 
-	if (actor->GetName() == "Q*Bert2")
+
+	if (actor->GetName() == "Player2")
+	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer2");
+		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
+		if (transformComp)
+		{
+			const auto& playerSpawn = actor->GetComponent<PlayerComponent>()->GetPlayerSpawn();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+		}
+		else
+		{
+			std::cout << "WARNING: transformComp not found on player after player death" << std::endl;
+		}
+	}
 
-	TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
-	if (transformComp)
-	{
-		const auto& playerSpawn = PlayerComponent::GetPlayerSpawn();
-		transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
-	}
-	else
-	{
-		std::cout << "WARNING: transformComp not found on player after player death" << std::endl;
-	}
 	auto moveComp = actor->GetComponent<MoveComponent>();
 	if (moveComp)
 	{
-		moveComp->SetCurrentCubeIndex(0);
+		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 	}
 	else
 	{

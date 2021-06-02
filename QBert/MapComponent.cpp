@@ -208,14 +208,45 @@ void MapComponent::NextMap()
 	InputManager::GetInstance().LockInput(false);
 	m_LevelFinished = false;
 	m_LevelFinishedColorChangeCount = 0;
-	auto player = SceneManager::GetInstance().GetCurrentScene()->GetPlayer(0);
-	TransformComponent* transformComp = player->GetComponent<TransformComponent>();
-	player->GetComponent<MoveComponent>()->SetCurrentCubeIndex(0);
-	if (transformComp)
+	auto scene = SceneManager::GetInstance().GetCurrentScene();
+	if (scene->GetGameMode() == GameMode::SinglePlayer)
 	{
-		const auto& playerSpawn = PlayerComponent::GetPlayerSpawn();
-		transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+		auto player = scene->GetPlayer(0);
+		TransformComponent* transformComp = player->GetComponent<TransformComponent>();
+		MoveComponent* moveComp = player->GetComponent<MoveComponent>();
+		PlayerComponent* playerComp = player->GetComponent<PlayerComponent>();
+		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
+		if (transformComp)
+		{
+			const auto& playerSpawn = playerComp->GetPlayerSpawn();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+		}
 	}
+	else if (scene->GetGameMode() == GameMode::CoOp)
+	{
+		auto player1 = scene->GetPlayer(0);
+		TransformComponent* transformComp = player1->GetComponent<TransformComponent>();
+		MoveComponent* moveComp = player1->GetComponent<MoveComponent>();
+		PlayerComponent* playerComp = player1->GetComponent<PlayerComponent>();
+		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
+		if (transformComp)
+		{
+			const auto& playerSpawn = playerComp->GetPlayerSpawn();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+		}
+
+		auto player2 = scene->GetPlayer(1);
+		transformComp = player2->GetComponent<TransformComponent>();
+		moveComp = player2->GetComponent<MoveComponent>();
+		playerComp = player2->GetComponent<PlayerComponent>();
+		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
+		if (transformComp)
+		{
+			const auto& playerSpawn = playerComp->GetPlayerSpawn();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+		}
+	}
+
 	for (const auto& cube : m_Cubes)
 	{
 		if (cube)

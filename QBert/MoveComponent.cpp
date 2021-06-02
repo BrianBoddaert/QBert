@@ -11,10 +11,11 @@
 using namespace dae;
 
 
-MoveComponent::MoveComponent()
+MoveComponent::MoveComponent(int currentCubeIndex)
     : m_Speed{ 50 }
     , m_IsMoving{ false }
-    , m_CurrentCubeIndex{ 0 }
+    , m_StartCubeIndex{ currentCubeIndex }
+    , m_CurrentCubeIndex{ currentCubeIndex }
     , m_FallingToDeath{ false }
     , m_Direction{ QBertSprite::DownLeft }
 {

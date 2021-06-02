@@ -10,7 +10,7 @@ namespace dae
     class MoveComponent final : public Component
     {
     public:
-        MoveComponent();
+        MoveComponent(int);
         void ActivateJump(const QBertSprite& dir);
         void Jump(float deltaT);
         void FallToDeath(float deltaT);
@@ -18,7 +18,7 @@ namespace dae
         void Update(float deltaT) override;
 
         void SetCurrentCubeIndex(int index) { m_CurrentCubeIndex = index; };
-
+        int GetStartCubeIndex() const { return m_StartCubeIndex; };
         bool GetIsFallingToDeathBehindMap() const { return m_FallingToDeath && !m_FirstHalfOfTheJump && (m_Direction == QBertSprite::UpLeftJump || m_Direction == QBertSprite::UpRightJump); };
     private:
         void CorrectPosition();
@@ -34,6 +34,7 @@ namespace dae
         QBertSprite m_Direction;
         float m_MovementDistanceRatio;
         glm::vec2 m_JumpStartPos;
+        const int m_StartCubeIndex;
         int m_CurrentCubeIndex;
     };
 

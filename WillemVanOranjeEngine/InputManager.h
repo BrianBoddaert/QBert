@@ -100,7 +100,7 @@ namespace dae
 		}
 
 		void LockInput(bool lock = true) { m_InputLocked = lock; }
-
+		bool GetInputLocked() const { return m_InputLocked; }
 	private:
 		bool m_InputLocked;
 		std::unique_ptr <KeyboardController> m_KeyboardController;

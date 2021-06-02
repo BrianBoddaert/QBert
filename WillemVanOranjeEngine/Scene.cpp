@@ -4,7 +4,11 @@
 
 using namespace dae;
 
-Scene::Scene(const std::string& name) : m_Name(name) {}
+Scene::Scene(const std::string& name,const GameMode& gameMode)
+	: m_Name(name)
+	, m_GameMode{gameMode}
+{
+}
 
 Scene::~Scene() = default;
 

@@ -13,6 +13,9 @@ namespace dae
 		void Initialize();
 		void AssignKeys();
 		void LoadGame() const;
+		void LoadSinglePlayerScene() const;
+		void LoadCoOpScene() const;
+		void LoadVersusScene() const;
 		void Cleanup();
 		void Run();
 

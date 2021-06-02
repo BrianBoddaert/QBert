@@ -25,11 +25,11 @@ namespace dae
 		void Initialize();
 		void SetMoveInput(const MoveInputDirections& dir, bool on);
 		void Update(float) override;
-		static void SetPlayerSpawn(const glm::vec2& spawn) { m_PlayerSpawn = spawn; };
-		static const glm::vec2& GetPlayerSpawn() { return m_PlayerSpawn; };
+		void SetPlayerSpawn(const glm::vec2& spawn) { m_PlayerSpawn = spawn; };
+		const glm::vec2& GetPlayerSpawn() { return m_PlayerSpawn; };
 
 	private:
-		static glm::vec2 m_PlayerSpawn;
+		glm::vec2 m_PlayerSpawn;
 		QBertSprite m_CurrentSprite;
 		bool m_MoveInputsActive[long(MoveInputDirections::Count)];
 

@@ -11,13 +11,13 @@ void dae::SceneManager::Render()
 	m_pCurrentScene->Render();
 }
 
-dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
+dae::Scene& dae::SceneManager::CreateScene(const std::string& name,const int gameMode)
 {
-	const auto scene = std::shared_ptr<Scene>(new Scene(name));
+	const auto scene = std::shared_ptr<Scene>(new Scene(name,(GameMode)gameMode));
 	m_Scenes.push_back(scene);
 
 	m_pCurrentScene = scene;
-	return *scene;
+	return *m_pCurrentScene;
 }
 
 std::shared_ptr<dae::Scene> dae::SceneManager::GetSceneByName(const std::string& n) const

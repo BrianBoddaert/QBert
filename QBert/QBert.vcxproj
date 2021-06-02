@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClInclude Include="AudioClasses.h" />
     <ClInclude Include="Cube.h" />
-    <ClInclude Include="DieCommand.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="GameObject.h" />
@@ -41,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="DieCommand.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
     <ClCompile Include="HealthComponent.cpp" />

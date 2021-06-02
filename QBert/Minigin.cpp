@@ -28,7 +28,6 @@
 #include "MoveComponent.h"
 
 #include "IncreasePointsCommand.h"
-#include "DieCommand.h"
 #include "PauseCommand.h"
 
 #include "LivesObserver.h"
@@ -122,10 +121,11 @@ void dae::Minigin::AssignKeys()
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
 }
 
-void dae::Minigin::LoadGame() const
+void dae::Minigin::LoadSinglePlayerScene() const
 {
-	auto& scene = SceneManager::GetInstance().CreateScene("GameScene");
 	SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
+
+	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)dae::GameMode::SinglePlayer);
 
 	{
 		auto go = std::make_shared<GameObject>("Background");
@@ -198,7 +198,7 @@ void dae::Minigin::LoadGame() const
 		player->SetTexture("Textures/Qbert2.png");
 
 		const glm::vec2 playerPos = { windowSurface->w / 2 + playerHalfSize.x, windowSurface->h / 2 - playerHalfSize.y };
-		PlayerComponent::SetPlayerSpawn(playerPos);
+		playerComponent->SetPlayerSpawn(playerPos);
 
 		player->AddComponent(new TransformComponent(playerPos, 1.0f));
 		//player->SetPosition(playerPos.x, playerPos.y);
@@ -208,7 +208,7 @@ void dae::Minigin::LoadGame() const
 
 		player->AddWatcher(new LivesObserver());
 		player->AddWatcher(new ScoreObserver());
-		player->AddComponent(new MoveComponent());
+		player->AddComponent(new MoveComponent(0));
 
 		scene.AddPlayer(player);
 	}
@@ -224,6 +224,143 @@ void dae::Minigin::LoadGame() const
 
 		scene.Add(playerDiedPopup);
 	}
+
+}
+
+void dae::Minigin::LoadCoOpScene() const
+{
+	SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
+
+	auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)dae::GameMode::CoOp);
+
+	
+	auto map = std::make_shared<GameObject>("Map");
+	//250,200
+	const glm::vec2 highestCubePos = { windowSurface->w / 2, windowSurface->h / 2 };
+	MapComponent* mapComp = new MapComponent(scene, highestCubePos);
+	map->AddComponent(mapComp);
+	map->AddWatcher(new LevelCompleteObserver());
+	scene.SetCurrentMap(map);
+	
+	{
+		{
+			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
+			scoreDisplay->AddComponent(new TransformComponent({ 200,0 }, 1.0f));
+
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto scoreCounter = new TextComponent("Score: 0", font);
+			scoreDisplay->AddComponent(scoreCounter);
+
+			scene.Add(scoreDisplay);
+
+			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
+			livesDisplay->AddComponent(new TransformComponent());
+			livesDisplay->SetPosition(400, 0);
+
+			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto livesCounter = new TextComponent("Remaining lives: 3", font);
+			livesDisplay->AddComponent(livesCounter);
+
+			scene.Add(livesDisplay);
+		}
+		{
+			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
+			scoreDisplay->AddComponent(new TransformComponent({ windowSurface->w - 200.0f,0 }, 1.0f));
+
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto scoreCounter = new TextComponent("Score: 0", font);
+			scoreDisplay->AddComponent(scoreCounter);
+
+			scene.Add(scoreDisplay);
+
+			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
+			livesDisplay->AddComponent(new TransformComponent());
+			livesDisplay->SetPosition(windowSurface->w - 400.0f, 0);
+
+			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto livesCounter = new TextComponent("Remaining lives: 3", font);
+			livesDisplay->AddComponent(livesCounter);
+
+			scene.Add(livesDisplay);
+		}
+
+		{
+			auto player = std::make_shared<GameObject>("Player1");
+			PlayerComponent* playerComponent = new PlayerComponent();
+
+			player->AddComponent(playerComponent);
+
+			SDL_Rect playerSrcRect = { 0,0,16,16 };
+			const glm::vec2 playerHalfSize = { 8,8 };
+			player->AddComponent(new RenderComponent(playerSrcRect));
+			player->SetTexture("Textures/Qbert2.png");
+			//const glm::vec2& cubeOffset =  mapComp->GetCubeOffset();
+			const glm::vec2 playerPos = { (windowSurface->w / 2 + playerHalfSize.x) - 96, (windowSurface->h / 2 - playerHalfSize.y) + 144 };
+			playerComponent->SetPlayerSpawn(playerPos);
+
+			player->AddComponent(new TransformComponent(playerPos, 1.0f));
+
+			player->AddComponent(new HealthComponent(3));
+			player->AddComponent(new ScoreComponent(0));
+
+			player->AddWatcher(new LivesObserver());
+			player->AddWatcher(new ScoreObserver());
+			player->AddComponent(new MoveComponent(27));
+
+			scene.AddPlayer(player);
+		}
+		{
+			auto player = std::make_shared<GameObject>("Player2");
+			PlayerComponent* playerComponent = new PlayerComponent();
+
+			player->AddComponent(playerComponent);
+
+			SDL_Rect playerSrcRect = { 0,0,16,16 };
+			const glm::vec2 playerHalfSize = { 8,8 };
+			player->AddComponent(new RenderComponent(playerSrcRect));
+			player->SetTexture("Textures/Qbert2.png");
+			//const glm::vec2& cubeOffset =  mapComp->GetCubeOffset();
+			const glm::vec2 playerPos = { (windowSurface->w / 2 + playerHalfSize.x) + 96, (windowSurface->h / 2 - playerHalfSize.y) + 144 };
+			playerComponent->SetPlayerSpawn(playerPos);
+
+			player->AddComponent(new TransformComponent(playerPos, 1.0f));
+
+			player->AddComponent(new HealthComponent(3));
+			player->AddComponent(new ScoreComponent(0));
+
+			player->AddWatcher(new LivesObserver());
+			player->AddWatcher(new ScoreObserver());
+			player->AddComponent(new MoveComponent(6));
+
+			scene.AddPlayer(player);
+		}
+	}
+	{
+		auto playerDiedPopup = std::make_shared<GameObject>("PlayerDiedPopup");
+		playerDiedPopup->AddComponent(new TransformComponent());
+		playerDiedPopup->AddComponent(new TimerComponent());
+		playerDiedPopup->SetEnabled(false);
+		playerDiedPopup->SetPosition(400, 400);
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto textComp = new TextComponent("Player died", font);
+		playerDiedPopup->AddComponent(textComp);
+
+		scene.Add(playerDiedPopup);
+	}
+}
+
+void dae::Minigin::LoadVersusScene() const
+{
+
+}
+
+
+void dae::Minigin::LoadGame() const
+{
+	
+	LoadCoOpScene();
+	
+	
 
 }
 

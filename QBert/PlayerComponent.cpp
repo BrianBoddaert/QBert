@@ -1,11 +1,10 @@
 #include "MiniginPCH.h"
 #include "PlayerComponent.h"
 #include "MoveComponent.h"
-
+#include "InputManager.h"
 using namespace dae;
 
 
-glm::vec2 PlayerComponent::m_PlayerSpawn = { 0,0 };
 
 PlayerComponent::PlayerComponent()
 	:m_CurrentSprite{ QBertSprite::DownRight }
@@ -26,7 +25,8 @@ void PlayerComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
 void PlayerComponent::Update(float)
 {
 	MoveComponent* animComp = m_pGameObject->GetComponent<MoveComponent>();
-	if (animComp->IsMoving())
+	
+	if (animComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
 		return;
 
 	if (m_MoveInputsActive[(int)MoveInputDirections::Down] && m_MoveInputsActive[(int)MoveInputDirections::Left])
