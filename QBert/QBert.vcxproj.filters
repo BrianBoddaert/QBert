@@ -33,9 +33,6 @@
     <ClInclude Include="FPSComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HealthComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>

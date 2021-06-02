@@ -23,7 +23,6 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="FPSComponent.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="IncreasePointsCommand.h" />
     <ClInclude Include="LevelCompleteObserver.h" />

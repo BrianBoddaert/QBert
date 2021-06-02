@@ -16,7 +16,6 @@ dae::InputManager::InputManager()
 
 bool dae::InputManager::ProcessInput()
 {
-
     ControllerInput();
     return KeyboardInput();
 }
