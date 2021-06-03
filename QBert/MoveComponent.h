@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include <SDL.h>
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 #include "TransformComponent.h"
 
 namespace dae

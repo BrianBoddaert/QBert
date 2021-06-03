@@ -1,31 +1,29 @@
 #include "MiniginPCH.h"
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 #include "MoveComponent.h"
 #include "InputManager.h"
 using namespace dae;
 
-
-
-PlayerComponent::PlayerComponent()
+ControlComponent::ControlComponent()
 	:m_CurrentSprite{ QBertSprite::DownRight }
 {
 	Initialize();
 }
 
-void PlayerComponent::Initialize()
+void ControlComponent::Initialize()
 {
 
 }
 
-void PlayerComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
+void ControlComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
 {
 	m_MoveInputsActive[int(dir)] = on;
 }
 
-void PlayerComponent::Update(float)
+void ControlComponent::Update(float)
 {
 	MoveComponent* animComp = m_pGameObject->GetComponent<MoveComponent>();
-	
+
 	if (animComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
 		return;
 

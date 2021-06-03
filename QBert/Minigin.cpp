@@ -10,13 +10,12 @@
 //#include <SDL.h>
 #include <SDL_mixer.h>
 
-
 #include "GameObject.h"
 #include "Scene.h"
 
 #include "AudioClasses.h"
 
-#include "Component.h"
+#include "ControlComponent.h"
 #include "TransformComponent.h"
 #include "FPSComponent.h"
 #include "HealthComponent.h"
@@ -36,14 +35,15 @@
 
 #include <Xinput.h>
 #include <glm\vec2.hpp>
-#include "PlayerComponent.h"
+
 
 using namespace std;
 using namespace std::chrono;
+using namespace dae;
 
-float dae::Minigin::MsPerUpdate = 0.02f;
+float Minigin::MsPerUpdate = 0.02f;
 
-void dae::Minigin::Initialize()
+void Minigin::Initialize()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		throw std::runtime_error(std::string("SDL_Init_Video Error: ") + SDL_GetError());
@@ -93,7 +93,7 @@ void dae::Minigin::Initialize()
  * Code constructing the scene world starts here
  */
 
-void dae::Minigin::AssignKeys()
+void Minigin::AssignKeys()
 {
 	auto& input = InputManager::GetInstance();
 
@@ -121,11 +121,11 @@ void dae::Minigin::AssignKeys()
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
 }
 
-void dae::Minigin::LoadSinglePlayerScene() const
+void Minigin::LoadSinglePlayerScene() const
 {
 	SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
 
-	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)dae::GameMode::SinglePlayer);
+	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
 
 	{
 		auto go = std::make_shared<GameObject>("Background");
@@ -188,9 +188,9 @@ void dae::Minigin::LoadSinglePlayerScene() const
 		scene.Add(livesDisplay);
 
 		auto player = std::make_shared<GameObject>("Player1");
-		PlayerComponent* playerComponent = new PlayerComponent();
+		ControlComponent* controlComponent = new ControlComponent();  // ControlComponent();
 
-		player->AddComponent(playerComponent);
+		player->AddComponent(controlComponent);
 
 		SDL_Rect playerSrcRect = { 0,0,16,16 };
 		const glm::vec2 playerHalfSize = { 8,8 };
@@ -198,7 +198,7 @@ void dae::Minigin::LoadSinglePlayerScene() const
 		player->SetTexture("Textures/Qbert2.png");
 
 		const glm::vec2 playerPos = { windowSurface->w / 2 + playerHalfSize.x, windowSurface->h / 2 - playerHalfSize.y };
-		playerComponent->SetPlayerSpawn(playerPos);
+		controlComponent->SetPlayerSpawn(playerPos);
 
 		player->AddComponent(new TransformComponent(playerPos, 1.0f));
 		//player->SetPosition(playerPos.x, playerPos.y);
@@ -227,11 +227,11 @@ void dae::Minigin::LoadSinglePlayerScene() const
 
 }
 
-void dae::Minigin::LoadCoOpScene() const
+void Minigin::LoadCoOpScene() const
 {
 	SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
 
-	auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)dae::GameMode::CoOp);
+	auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)GameMode::CoOp);
 
 	
 	auto map = std::make_shared<GameObject>("Map");
@@ -286,9 +286,9 @@ void dae::Minigin::LoadCoOpScene() const
 
 		{
 			auto player = std::make_shared<GameObject>("Player1");
-			PlayerComponent* playerComponent = new PlayerComponent();
+			ControlComponent* controlComponent = new ControlComponent();
 
-			player->AddComponent(playerComponent);
+			player->AddComponent(controlComponent);
 
 			SDL_Rect playerSrcRect = { 0,0,16,16 };
 			const glm::vec2 playerHalfSize = { 8,8 };
@@ -296,7 +296,7 @@ void dae::Minigin::LoadCoOpScene() const
 			player->SetTexture("Textures/Qbert2.png");
 			//const glm::vec2& cubeOffset =  mapComp->GetCubeOffset();
 			const glm::vec2 playerPos = { (windowSurface->w / 2 + playerHalfSize.x) - 96, (windowSurface->h / 2 - playerHalfSize.y) + 144 };
-			playerComponent->SetPlayerSpawn(playerPos);
+			controlComponent->SetPlayerSpawn(playerPos);
 
 			player->AddComponent(new TransformComponent(playerPos, 1.0f));
 
@@ -311,9 +311,9 @@ void dae::Minigin::LoadCoOpScene() const
 		}
 		{
 			auto player = std::make_shared<GameObject>("Player2");
-			PlayerComponent* playerComponent = new PlayerComponent();
+			ControlComponent* controlComponent = new ControlComponent();
 
-			player->AddComponent(playerComponent);
+			player->AddComponent(controlComponent);
 
 			SDL_Rect playerSrcRect = { 0,0,16,16 };
 			const glm::vec2 playerHalfSize = { 8,8 };
@@ -321,7 +321,7 @@ void dae::Minigin::LoadCoOpScene() const
 			player->SetTexture("Textures/Qbert2.png");
 			//const glm::vec2& cubeOffset =  mapComp->GetCubeOffset();
 			const glm::vec2 playerPos = { (windowSurface->w / 2 + playerHalfSize.x) + 96, (windowSurface->h / 2 - playerHalfSize.y) + 144 };
-			playerComponent->SetPlayerSpawn(playerPos);
+			controlComponent->SetPlayerSpawn(playerPos);
 
 			player->AddComponent(new TransformComponent(playerPos, 1.0f));
 
@@ -349,13 +349,13 @@ void dae::Minigin::LoadCoOpScene() const
 	}
 }
 
-void dae::Minigin::LoadVersusScene() const
+void Minigin::LoadVersusScene() const
 {
 
 }
 
 
-void dae::Minigin::LoadGame() const
+void Minigin::LoadGame() const
 {
 	
 	LoadCoOpScene();
@@ -364,7 +364,7 @@ void dae::Minigin::LoadGame() const
 
 }
 
-void dae::Minigin::Cleanup()
+void Minigin::Cleanup()
 {
 	ServiceLocator::CleanUp();
 
@@ -378,7 +378,7 @@ void dae::Minigin::Cleanup()
 
 }
 
-void dae::Minigin::Run()
+void Minigin::Run()
 {
 	Initialize();
 

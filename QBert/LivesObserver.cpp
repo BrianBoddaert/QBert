@@ -7,13 +7,13 @@
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
 #include "TimerComponent.h"
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 #include "TransformComponent.h"
 #include "MoveComponent.h"
 void dae::LivesObserver::OnNotify(const GameObject* actor, Event event)
 {
 	if (event == Event::ActorDied)
-		if (actor->GetComponent<PlayerComponent>())
+		if (actor->GetComponent<ControlComponent>())
 			Unlock(actor);
 }
 
@@ -21,13 +21,13 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 {
 	std::shared_ptr<SceneObject> livesDisplay = nullptr;
 
-	if (actor->GetName() == "Player1")
+	if (actor->HasTag(dae::Tag::Player1))
 	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer1");
 		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
 		if (transformComp)
 		{
-			const auto& playerSpawn = actor->GetComponent<PlayerComponent>()->GetPlayerSpawn();
+			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetPlayerSpawn();
 			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
 		}
 		else
@@ -37,13 +37,13 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 	}
 
 
-	if (actor->GetName() == "Player2")
+	if (actor->HasTag(dae::Tag::Player2))
 	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer2");
 		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
 		if (transformComp)
 		{
-			const auto& playerSpawn = actor->GetComponent<PlayerComponent>()->GetPlayerSpawn();
+			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetPlayerSpawn();
 			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
 		}
 		else

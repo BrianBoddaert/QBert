@@ -21,7 +21,7 @@ namespace dae
 
 		void Update(float deltaT);
 		void Render() const;
-		const std::string& GetName() const;
+		const std::string& GetTag() const;
 
 		~Scene();
 		Scene(const Scene& other) = delete;

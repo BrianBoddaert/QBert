@@ -26,7 +26,7 @@ void CollisionManager::Update()
 
 void CollisionManager::CollisionEffect(std::shared_ptr<GameObject> player, std::shared_ptr<GameObject> collider)
 {
-	if (collider->GetName() == "Coily")
+	if (collider->HasTag(dae::Tag::Coily))
 	{
 		/*player->GetComponent<HealthComponent>()*/
 	}
@@ -35,7 +35,7 @@ void CollisionManager::CollisionEffect(std::shared_ptr<GameObject> player, std::
 
 void CollisionManager::AddCollider(const std::shared_ptr<GameObject>& gameObject)
 {
-	if (gameObject->GetName() == "Player1" || gameObject->GetName() == "Player2")
+	if (gameObject->HasTag(dae::Tag::Player))
 	{
 		m_pPlayers.push_back(gameObject);
 	}

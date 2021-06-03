@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "TransformComponent.h"
 #include "RenderComponent.h"
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 #include "MoveComponent.h"
 #include "Scene.h"
 #include "SceneManager.h"
@@ -214,7 +214,7 @@ void MapComponent::NextMap()
 		auto player = scene->GetPlayer(0);
 		TransformComponent* transformComp = player->GetComponent<TransformComponent>();
 		MoveComponent* moveComp = player->GetComponent<MoveComponent>();
-		PlayerComponent* playerComp = player->GetComponent<PlayerComponent>();
+		ControlComponent* playerComp = player->GetComponent<ControlComponent>();
 		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 		if (transformComp)
 		{
@@ -227,7 +227,7 @@ void MapComponent::NextMap()
 		auto player1 = scene->GetPlayer(0);
 		TransformComponent* transformComp = player1->GetComponent<TransformComponent>();
 		MoveComponent* moveComp = player1->GetComponent<MoveComponent>();
-		PlayerComponent* playerComp = player1->GetComponent<PlayerComponent>();
+		ControlComponent* playerComp = player1->GetComponent<ControlComponent>();
 		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 		if (transformComp)
 		{
@@ -238,7 +238,7 @@ void MapComponent::NextMap()
 		auto player2 = scene->GetPlayer(1);
 		transformComp = player2->GetComponent<TransformComponent>();
 		moveComp = player2->GetComponent<MoveComponent>();
-		playerComp = player2->GetComponent<PlayerComponent>();
+		playerComp = player2->GetComponent<ControlComponent>();
 		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 		if (transformComp)
 		{

@@ -10,7 +10,7 @@
 
 int main(int, char* []) //
 {
-	dae::Minigin engine;
-	engine.Run();
+	Minigin game;
+	game.Run();
 	return 0;
 }

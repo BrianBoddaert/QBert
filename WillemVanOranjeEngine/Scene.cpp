@@ -51,7 +51,7 @@ void Scene::Render() const
 	}
 }
 
-const std::string& Scene::GetName() const
+const std::string& Scene::GetTag() const
 {
 	return m_Name;
 }

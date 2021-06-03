@@ -60,7 +60,7 @@
     <ClInclude Include="PauseCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerComponent.h">
+    <ClInclude Include="ControlComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScoreComponent.h">
@@ -116,7 +116,7 @@
     <ClCompile Include="PauseCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerComponent.cpp">
+    <ClCompile Include="ControlComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScoreComponent.cpp">

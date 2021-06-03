@@ -18,10 +18,10 @@ void dae::ScoreObserver::Unlock(const GameObject* actor)
 
 	std::shared_ptr<SceneObject> pointsDisplay = nullptr;
 
-	if (actor->GetName() == "Q*Bert1")
+	if (actor->HasTag(dae::Tag::Player1))
 		pointsDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("ScoreDisplayPlayer1");
 
-	if (actor->GetName() == "Q*Bert2")
+	if (actor->HasTag(dae::Tag::Player2))
 		pointsDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("ScoreDisplayPlayer2");
 
 	if (!pointsDisplay) {

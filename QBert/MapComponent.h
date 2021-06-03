@@ -3,7 +3,7 @@
 #include <glm\vec2.hpp>
 #include "Scene.h"
 #include <SDL.h>
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 #include "Cube.h"
 
 namespace dae

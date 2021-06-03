@@ -3,7 +3,7 @@
 #include "TextComponent.h"
 #include "Subject.h"
 #include "TransformComponent.h"
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 
 dae::HealthComponent::HealthComponent(const unsigned int& health)
 	:m_Lives{ health }
@@ -24,7 +24,7 @@ void dae::HealthComponent::Die()
 
 	m_Lives--;
 
-	if (m_pGameObject->GetComponent<PlayerComponent>())
+	if (m_pGameObject->GetComponent<ControlComponent>())
 		m_pGameObject->Notify(Event::ActorDied);
 }
 

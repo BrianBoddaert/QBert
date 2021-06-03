@@ -24,7 +24,7 @@ std::shared_ptr<dae::Scene> dae::SceneManager::GetSceneByName(const std::string&
 {
 	for (const auto& scene : m_Scenes)
 	{
-		if (scene->GetName().compare(n) == 0)
+		if (scene->GetTag().compare(n) == 0)
 			return scene;
 	}
 	return nullptr;

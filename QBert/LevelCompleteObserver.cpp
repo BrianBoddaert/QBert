@@ -8,7 +8,7 @@
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
 #include "MapComponent.h"
-#include "PlayerComponent.h"
+#include "ControlComponent.h"
 #include "TransformComponent.h"
 #include "MoveComponent.h"
 #include "InputManager.h"

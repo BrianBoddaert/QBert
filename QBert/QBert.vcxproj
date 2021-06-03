@@ -33,7 +33,7 @@
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="MoveComponent.h" />
     <ClInclude Include="PauseCommand.h" />
-    <ClInclude Include="PlayerComponent.h" />
+    <ClInclude Include="ControlComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreObserver.h" />
   </ItemGroup>
@@ -57,7 +57,7 @@
     <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="MoveComponent.cpp" />
     <ClCompile Include="PauseCommand.cpp" />
-    <ClCompile Include="PlayerComponent.cpp" />
+    <ClCompile Include="ControlComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ServiceLocator.cpp" />
