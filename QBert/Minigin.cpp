@@ -219,7 +219,7 @@ void Minigin::LoadSinglePlayerScene() const
 		player->AddWatcher(new ScoreObserver());
 		player->AddComponent(new MoveComponent(0));
 		player->AddTag(dae::Tag::Player);
-
+		player->AddTag(dae::Tag::Player1);
 		scene.AddPlayer(player);
 	}
 	{
@@ -447,7 +447,7 @@ void Minigin::LoadVersusScene() const
 			scene.AddPlayer(player);
 		}
 		{
-			auto coily = std::make_shared<GameObject>("Coily");
+			auto coily = std::make_shared<GameObject>("Player2");
 
 			SDL_Rect srcRect = { 0,32,16,32 };
 			const dae::Vector2 srcRectHalf = { 8,16 };

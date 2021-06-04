@@ -4,6 +4,7 @@
 #include "Subject.h"
 #include "TransformComponent.h"
 #include "ControlComponent.h"
+#include "EnemyManager.h"
 
 HealthComponent::HealthComponent(const unsigned int& health)
 	:m_Lives{ health }
@@ -26,6 +27,10 @@ void HealthComponent::Die()
 
 	if (m_pGameObject->HasTag(dae::Tag::Player))
 		m_pGameObject->Notify(dae::Event::ActorDied);
+	else
+	{
+		EnemyManager::GetInstance().RemoveEnemyByName(m_pGameObject->GetName());
+	}
 }
 
 void HealthComponent::Respawn()

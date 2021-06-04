@@ -8,6 +8,7 @@ public:
 	void Update(float deltaT);
 	void SpawnCoily();
 	void ClearEnemies();
+	void RemoveEnemyByName(const std::string& Enemy);
 private:
 	friend class dae::Singleton<EnemyManager>;
 

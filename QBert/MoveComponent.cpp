@@ -40,7 +40,7 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
 
     }
 
-    ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 0.3f);
+    ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 0.1f);
 
     const auto& renderComp = m_pGameObject->GetComponent<RenderComponent>();
     m_pTransform = m_pGameObject->GetComponent<TransformComponent>();
@@ -68,7 +68,7 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
     if (!isOnMap)
     {
         // Player jumped off the map
-        ServiceLocator::GetSoundSystem().QueueSound(EffectId::Fall, 0.3f);
+        ServiceLocator::GetSoundSystem().QueueSound(EffectId::Fall, 0.1f);
         m_FallingToDeath = true;
     }
 

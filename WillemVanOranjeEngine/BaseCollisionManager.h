@@ -11,6 +11,9 @@ namespace dae
 		BaseCollisionManager();
 		void Update(float deltaT);
 		void AddCollider(const std::shared_ptr<GameObject>& gameObject);
+
+		void RemoveCollidersByTag(const dae::Tag& tag);
+		void RemoveObjectsByName(const std::string& name);
 	protected:
 	//	friend class dae::Singleton<BaseCollisionManager>;
 

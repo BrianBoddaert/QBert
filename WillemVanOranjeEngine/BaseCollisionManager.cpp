@@ -56,3 +56,20 @@ bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> player, std::
 
 	return false;
 }
+
+void BaseCollisionManager::RemoveCollidersByTag(const dae::Tag& tag)
+{
+	for (size_t i = 0; i < m_pColliders.size(); i++)
+	{
+		if (m_pColliders[i]->HasTag(tag) && m_pColliders[i]->GetName() != "Player2")
+			m_pColliders.erase(m_pColliders.begin() + i);
+	}
+}
+void BaseCollisionManager::RemoveObjectsByName(const std::string& name)
+{
+	for (size_t i = 0; i < m_pColliders.size(); i++)
+	{
+		if (m_pColliders[i]->GetName() == name)
+			m_pColliders.erase(m_pColliders.begin() + i);
+	}
+}

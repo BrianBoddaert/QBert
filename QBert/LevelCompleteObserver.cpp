@@ -27,7 +27,7 @@ void LevelCompleteObserver::Unlock(const GameObject* go)
 	MapComponent* mapComp = go->GetComponent<MapComponent>();
 
 	mapComp->SetLevelFinished(true);
-	ServiceLocator::GetSoundSystem().QueueSound(EffectId::Victory, 0.3f);
+	ServiceLocator::GetSoundSystem().QueueSound(EffectId::Victory, 0.1f);
 	InputManager::GetInstance().LockInput(true);
 
 }

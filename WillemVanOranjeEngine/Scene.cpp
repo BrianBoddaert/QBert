@@ -21,11 +21,11 @@ void Scene::Add(const std::shared_ptr<GameObject>& object)
 
 void Scene::Update(float deltaT)
 {
-
-	for(auto& object : m_Objects)
+	for (size_t i = 0; i < m_Objects.size(); i++)
 	{
-		object->Update(deltaT);
+		m_Objects[i]->Update(deltaT);
 	}
+
 }
 
 bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
@@ -103,6 +103,23 @@ void Scene::SetCurrentMap(const std::shared_ptr<GameObject>& map)
 std::shared_ptr<GameObject> Scene::GetCurrentMap() const
 {
 	return m_CurrentMap;
+}
+void Scene::RemoveObjectsByTag(const dae::Tag& tag)
+{
+	for (size_t i = 0; i < m_Objects.size(); i++)
+	{
+		if (m_Objects[i]->HasTag(tag) && m_Objects[i]->GetName() != "Player2")
+			m_Objects.erase(m_Objects.begin() + i);
+	}
+}
+
+void Scene::RemoveObjectsByName(const std::string& name)
+{
+	for (size_t i = 0; i < m_Objects.size(); i++)
+	{
+		if (m_Objects[i]->GetName() == name)
+			m_Objects.erase(m_Objects.begin() + i);
+	}
 }
 
 void Scene::AddMap(const std::shared_ptr<GameObject>& map)

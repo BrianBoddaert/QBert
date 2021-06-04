@@ -16,7 +16,7 @@ using namespace dae;
 EnemyManager::EnemyManager()
 	: m_SpawnTimer{0.0f}
 	, m_SpawnEnemyInterval{7.5f}
-	, m_EnemyCounter{0}
+	, m_CoilyCount{0}
 {
 
 }
@@ -61,19 +61,23 @@ void EnemyManager::SpawnCoily()
 	m_CoilyCount++;
 }
 
+void EnemyManager::RemoveEnemyByName(const std::string& name)
+{
+	auto currentScene = SceneManager::GetInstance().GetCurrentScene();
+	auto& collisionManager = CollisionManager::GetInstance();
+	currentScene->RemoveObjectsByName(name);
+	collisionManager.RemoveObjectsByName(name);
+
+	m_CoilyCount--;
+}
+
+
 void EnemyManager::ClearEnemies()
 {
-	const auto& currentScene = SceneManager::GetInstance().GetCurrentScene();
-
-	for (size_t i = 0; i < m_CoilyCount; i++)
-	{
-		std::shared_ptr<GameObject> obj = currentScene->GetObjectByName("Coily" + std::to_string(m_CoilyCount));
-		if (obj)
-		{
-
-		}
-	}
-
+	auto currentScene = SceneManager::GetInstance().GetCurrentScene();
+	auto& collisionManager = CollisionManager::GetInstance();
+	currentScene->RemoveObjectsByTag(dae::Tag::Coily);
+	collisionManager.RemoveCollidersByTag(dae::Tag::Coily);
 
 	m_CoilyCount = 0;
 }
