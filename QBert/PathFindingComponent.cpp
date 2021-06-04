@@ -10,12 +10,11 @@
 using namespace dae;
 
 PathFindingComponent::PathFindingComponent()
-	:m_JumpCooldownTimer{ 0 }
-	, m_JumpCooldown{1.0f}
 {
 
 }
-void PathFindingComponent::Update(float deltaT)
+
+void PathFindingComponent::Update(float)
 {
 	MoveComponent* moveComp = m_pGameObject->GetComponent<MoveComponent>();
 
@@ -26,13 +25,7 @@ void PathFindingComponent::Update(float deltaT)
 	if (currentSprite == QBertSprite::DownRight)
 		return;
 
-	m_JumpCooldownTimer += deltaT;
-
-	if (m_JumpCooldownTimer >= m_JumpCooldown)
-	{
-		m_JumpCooldownTimer = 0.0f;
-		moveComp->ActivateJump(currentSprite);
-	}
+	moveComp->ActivateJump(currentSprite);
 
 
 }
@@ -73,6 +66,9 @@ const std::shared_ptr<dae::GameObject> PathFindingComponent::FindClosestPlayer()
 
 	for (size_t i = 0; i < players.size(); i++)
 	{
+		if (!players[i]->HasTag(dae::Tag::Player))
+			continue;
+
 		const  dae::Vector3& playerPos = players[i]->GetComponent<TransformComponent>()->GetPosition();
 		float distanceToPlayer = GetDistanceBetween(playerPos, currentPos);
 		if (distanceToPlayer < distanceToClosestPlayer)

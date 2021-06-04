@@ -37,6 +37,9 @@ namespace dae
         dae::Vector3 m_JumpStartPos;
         const int m_StartCubeIndex;
         int m_CurrentCubeIndex;
+
+        float m_JumpCooldownTimer;
+        float m_JumpCooldown;
     };
 
 }

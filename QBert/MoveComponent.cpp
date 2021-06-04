@@ -18,6 +18,8 @@ MoveComponent::MoveComponent(int currentCubeIndex)
     , m_CurrentCubeIndex{ currentCubeIndex }
     , m_FallingToDeath{ false }
     , m_Direction{ QBertSprite::DownLeft }
+    , m_JumpCooldownTimer{ 0 }
+    , m_JumpCooldown{ 0.5f }
 {
     const dae::Vector2& cubeOffset = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetCubeOffset();
     m_MoveDistance = cubeOffset * GAMESCALE;
@@ -27,6 +29,16 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
 {
     if (m_IsMoving)
         return;
+
+
+    if (m_pGameObject->HasTag(dae::Tag::Coily))
+    {
+        if (m_JumpCooldownTimer >= m_JumpCooldown)
+            m_JumpCooldownTimer = 0.0f;
+        else
+            return;
+
+    }
 
     const auto& renderComp = m_pGameObject->GetComponent<RenderComponent>();
     m_pTransform = m_pGameObject->GetComponent<TransformComponent>();
@@ -57,11 +69,13 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
         m_FallingToDeath = true;
     }
 
+
+
+
 }
 
 void MoveComponent::CorrectPosition()
 {
-
     if (m_Direction == QBertSprite::DownRightJump)
     {
         m_pTransform->SetPosition(m_JumpStartPos.x + m_MoveDistance.x, m_JumpStartPos.y + m_MoveDistance.y, m_JumpStartPos.z + 1);
@@ -82,7 +96,7 @@ void MoveComponent::CorrectPosition()
 
 void MoveComponent::Jump(float deltaT)
 {
-    dae::Vector3 movement = m_pTransform->GetPosition();
+    dae::Vector2 movement = m_pTransform->GetPosition();
 
     if (m_Direction == QBertSprite::DownRightJump || m_Direction == QBertSprite::UpRightJump)
         movement.x += deltaT * m_SpeedRatiod.x;
@@ -132,7 +146,7 @@ void MoveComponent::Jump(float deltaT)
 
 void MoveComponent::FallToDeath(float deltaT)
 {
-    dae::Vector3 movement = m_pTransform->GetPosition();
+    dae::Vector2 movement = m_pTransform->GetPosition();
 
     if (m_Direction == QBertSprite::DownRightJump || m_Direction == QBertSprite::UpRightJump)
         movement.x += deltaT * m_SpeedRatiod.x;
@@ -144,7 +158,26 @@ void MoveComponent::FallToDeath(float deltaT)
         movement.y -= deltaT * m_SpeedRatiod.y;
 
         if (abs(movement.y - m_JumpStartPos.y) > m_JumpHeight)
+        {
             m_FirstHalfOfTheJump = false;
+            if (m_Direction == QBertSprite::DownRightJump)
+            {
+                m_pTransform->SetPosition(movement.x, movement.y, 7);
+            }
+            else if (m_Direction == QBertSprite::DownLeftJump)
+            {
+                m_pTransform->SetPosition(movement.x, movement.y, 7);
+            }
+            else if (m_Direction == QBertSprite::UpLeftJump)
+            {
+                m_pTransform->SetPosition(movement.x, movement.y, -1);
+            }
+            else if (m_Direction == QBertSprite::UpRightJump)
+            {
+                m_pTransform->SetPosition(movement.x, movement.y, -1);
+            }
+        }
+       
     }
     else
     {
@@ -176,11 +209,13 @@ void MoveComponent::FallToDeath(float deltaT)
 
 void MoveComponent::Update(float deltaT)
 {
+
     if (m_FallingToDeath)
         FallToDeath(deltaT);
     else if (m_IsMoving)
         Jump(deltaT);
-
+    else if (m_pGameObject->HasTag(dae::Tag::Coily))
+        m_JumpCooldownTimer += deltaT;
 }
 
 

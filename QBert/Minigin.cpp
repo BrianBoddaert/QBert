@@ -170,7 +170,7 @@ void Minigin::LoadSinglePlayerScene() const
 		const dae::Vector3 highestCubePos = { float(m_WindowSurface->w / 2), float(m_WindowSurface->h / 2),0 };
 		map->AddComponent(new MapComponent(scene, highestCubePos));
 		map->AddWatcher(new LevelCompleteObserver());
-		scene.SetCurrentMap(map);
+		scene.AddMap(map);
 	}
 	{
 		auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
@@ -213,6 +213,7 @@ void Minigin::LoadSinglePlayerScene() const
 		player->AddWatcher(new LivesObserver());
 		player->AddWatcher(new ScoreObserver());
 		player->AddComponent(new MoveComponent(0));
+		player->AddTag(dae::Tag::Player);
 
 		scene.AddPlayer(player);
 	}
@@ -243,7 +244,7 @@ void Minigin::LoadCoOpScene() const
 	MapComponent* mapComp = new MapComponent(scene, highestCubePos);
 	map->AddComponent(mapComp);
 	map->AddWatcher(new LevelCompleteObserver());
-	scene.SetCurrentMap(map);
+	scene.AddMap(map);
 	
 	{
 		{
@@ -360,15 +361,126 @@ void Minigin::LoadCoOpScene() const
 void Minigin::LoadVersusScene() const
 {
 
+	auto& scene = SceneManager::GetInstance().CreateScene("VersusScene", (int)GameMode::Versus);
+
+	auto map = std::make_shared<GameObject>("Map");
+	//250,200
+	const dae::Vector3 highestCubePos = { (float)m_WindowSurface->w / 2,  (float)m_WindowSurface->h / 2,0 };
+	MapComponent* mapComp = new MapComponent(scene, highestCubePos);
+	map->AddComponent(mapComp);
+	map->AddWatcher(new LevelCompleteObserver());
+	scene.AddMap(map);
+
+	{
+		{
+			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
+			scoreDisplay->AddComponent(new TransformComponent({ 200,0,10 }, 1.0f));
+
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto scoreCounter = new dae::TextComponent("Score: 0", font);
+			scoreDisplay->AddComponent(scoreCounter);
+
+			scene.Add(scoreDisplay);
+
+			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
+			livesDisplay->AddComponent(new TransformComponent());
+			livesDisplay->SetPosition(400, 0, 10);
+
+			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
+			livesDisplay->AddComponent(livesCounter);
+
+			scene.Add(livesDisplay);
+		}
+		{
+			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
+			scoreDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 200.0f,0.0f,10 }, 1.0f));
+
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto scoreCounter = new dae::TextComponent("Score: 0", font);
+			scoreDisplay->AddComponent(scoreCounter);
+
+			scene.Add(scoreDisplay);
+
+			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
+			livesDisplay->AddComponent(new TransformComponent());
+			livesDisplay->SetPosition(m_WindowSurface->w - 400.0f, 0, 10);
+
+			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
+			livesDisplay->AddComponent(livesCounter);
+
+			scene.Add(livesDisplay);
+		}
+
+		{
+			auto player = std::make_shared<GameObject>("Player1");
+
+			const dae::Vector2 playerHalfSize = { 8,8 };
+			const dae::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,0 };
+
+			ControlComponent* controlComponent = new ControlComponent(playerPos);
+
+			player->AddComponent(controlComponent);
+			SDL_Rect playerSrcRect = { 0,0,16,16 };
+
+			player->AddComponent(new RenderComponent(playerSrcRect));
+			player->SetTexture("Textures/Qbert2.png");
+			//const dae::Vector2& cubeOffset =  mapComp->GetCubeOffset();
+
+			player->AddComponent(new TransformComponent(playerPos, 1.0f));
+
+			player->AddComponent(new HealthComponent(3));
+			player->AddComponent(new ScoreComponent(0));
+
+			player->AddWatcher(new LivesObserver());
+			player->AddWatcher(new ScoreObserver());
+			player->AddComponent(new MoveComponent(0));
+			player->AddTag(dae::Tag::Player);
+			player->AddTag(dae::Tag::Player1);
+			CollisionManager::GetInstance().AddCollider(player);
+			scene.AddPlayer(player);
+		}
+		{
+			auto coily = std::make_shared<GameObject>("Coily");
+
+			SDL_Rect srcRect = { 0,32,16,32 };
+			const dae::Vector2 srcRectHalf = { 8,16 };
+			coily->AddComponent(new RenderComponent(srcRect));
+			coily->SetTexture("Textures/Qbert2.png");
+
+			const Vector3 pos = { (m_WindowSurface->w / 2 + srcRectHalf.x) + 96, (m_WindowSurface->h / 2 - srcRectHalf.y) + 144,6 };
+
+			coily->AddComponent(new TransformComponent(pos, 1.0f));
+
+			coily->AddComponent(new HealthComponent(3));
+			coily->AddComponent(new MoveComponent(6));
+			coily->AddComponent(new ControlComponent(pos));
+			coily->AddTag(dae::Tag::Coily);
+			CollisionManager::GetInstance().AddCollider(coily);
+
+			scene.AddPlayer(coily);
+		}
+	}
+	{
+		auto playerDiedPopup = std::make_shared<GameObject>("PlayerDiedPopup");
+		playerDiedPopup->AddComponent(new TransformComponent());
+		playerDiedPopup->AddComponent(new TimerComponent());
+		playerDiedPopup->SetEnabled(false);
+		playerDiedPopup->SetPosition(400, 400, 10);
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto textComp = new dae::TextComponent("Player died", font);
+		playerDiedPopup->AddComponent(textComp);
+
+		scene.Add(playerDiedPopup);
+	}
 }
 
 
 void Minigin::LoadGame() const
 {
 	
-	LoadCoOpScene();
-	
-	
+	LoadVersusScene();
 
 }
 

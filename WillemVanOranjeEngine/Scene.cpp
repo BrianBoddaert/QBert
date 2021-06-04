@@ -22,21 +22,29 @@ void Scene::Add(const std::shared_ptr<GameObject>& object)
 void Scene::Update(float deltaT)
 {
 
-	m_CurrentMap->Update(deltaT);
-
 	for(auto& object : m_Objects)
 	{
 		object->Update(deltaT);
-	}
-	for (const auto& player : m_pPlayers)
-	{
-		player->Update(deltaT);
 	}
 }
 
 bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
 {
-	return (a->GetComponent<TransformComponent>()->GetPosition().z < b->GetComponent<TransformComponent>()->GetPosition().z);
+	auto aTransform = a->GetComponent<TransformComponent>();
+	auto bTransform = b->GetComponent<TransformComponent>();
+	float a_z;
+	float b_z;
+	if (aTransform)
+		a_z = aTransform->GetPosition().z;
+	else
+		a_z = 0.0;
+
+	if (bTransform)
+		b_z = bTransform->GetPosition().z;
+	else
+		b_z = 0.0;
+
+	return a_z < b_z;
 }
 
 void Scene::SortOnZAxis()
@@ -47,8 +55,6 @@ void Scene::SortOnZAxis()
 
 void Scene::Render() const
 {
-
-	m_CurrentMap->Render();
 
 	//for (const auto& player : m_pPlayers)
 	//{
@@ -102,6 +108,7 @@ std::shared_ptr<GameObject> Scene::GetCurrentMap() const
 void Scene::AddMap(const std::shared_ptr<GameObject>& map)
 {
 	m_pMaps.push_back(map);
+	m_Objects.push_back(map);
 	m_CurrentMap = map;
 }
 

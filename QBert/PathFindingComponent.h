@@ -13,8 +13,5 @@ private:
     const std::shared_ptr<dae::GameObject> FindClosestPlayer() const;
     float GetDistanceBetween(const dae::Vector3& a, const dae::Vector3& b) const;
 
-    float m_JumpCooldownTimer;
-    float m_JumpCooldown;
-
 };
 
