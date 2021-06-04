@@ -14,8 +14,9 @@ namespace dae
 	enum class EffectId
 	{
 		Jump,
-		Fire,
-		Fart
+		Fall,
+		Lift,
+		Victory
 	};
 
 	enum class MusicId
@@ -70,14 +71,24 @@ namespace dae
 			m_Playing.store(false);
 			m_QueueActive.notify_one();
 
-			if (m_MusicLibrary.find(MusicId::Ambient) != m_MusicLibrary.end())
-				Mix_FreeMusic(m_MusicLibrary.at(MusicId::Ambient));
-			if (m_SoundLibrary.find(EffectId::Fart) != m_SoundLibrary.end())
-				Mix_FreeChunk(m_SoundLibrary.at(EffectId::Fart));
-			if (m_SoundLibrary.find(EffectId::Fire) != m_SoundLibrary.end())
-				Mix_FreeChunk(m_SoundLibrary.at(EffectId::Fire));
-			if (m_SoundLibrary.find(EffectId::Jump) != m_SoundLibrary.end())
-				Mix_FreeChunk(m_SoundLibrary.at(EffectId::Jump));
+			for (auto const& x : m_SoundLibrary)
+			{
+				Mix_FreeChunk(m_SoundLibrary.at(x.first));
+			}
+
+			for (auto const& x : m_MusicLibrary)
+			{
+				Mix_FreeMusic(m_MusicLibrary.at(x.first));
+			}
+
+			//if (m_MusicLibrary.find(MusicId::Ambient) != m_MusicLibrary.end())
+			//	Mix_FreeMusic(m_MusicLibrary.at(MusicId::Ambient));
+			//if (m_SoundLibrary.find(EffectId::Fart) != m_SoundLibrary.end())
+			//	Mix_FreeChunk(m_SoundLibrary.at(EffectId::Fart));
+			//if (m_SoundLibrary.find(EffectId::Fire) != m_SoundLibrary.end())
+			//	Mix_FreeChunk(m_SoundLibrary.at(EffectId::Fire));
+			//if (m_SoundLibrary.find(EffectId::Jump) != m_SoundLibrary.end())
+			//	Mix_FreeChunk(m_SoundLibrary.at(EffectId::Jump));
 		}
 
 		void QueueSound(const EffectId& key, float volume = 1.0f) override
@@ -183,7 +194,6 @@ namespace dae
 		std::mutex m_Mutex;
 		std::condition_variable m_QueueActive{};
 		std::queue<StoredSound> m_SoundQueue{};
-
 		std::map<MusicId, Mix_Music*> m_MusicLibrary;
 		std::map<EffectId, Mix_Chunk*> m_SoundLibrary;
 	};
@@ -218,12 +228,12 @@ namespace dae
 			if (!m_Muted)
 			{
 				m_pRealSoundSystem->QueueSound(soundId, volume);
-				std::cout << "Playing " << std::to_string((int)soundId) << " at volume " << volume << std::endl;
+				//std::cout << "Playing " << std::to_string((int)soundId) << " at volume " << volume << std::endl;
 			}
-			else
-			{
-				std::cout << "Attempting to play " << std::to_string((int)soundId) << " but the sound is muted or the ID is invalid" << std::endl;
-			}
+			//else
+			//{
+			//	//std::cout << "Attempting to play " << std::to_string((int)soundId) << " but the sound is muted or the ID is invalid" << std::endl;
+			//}
 		}
 
 		void QueueSound(const MusicId& soundId, float volume = 1.0f) override
@@ -231,12 +241,12 @@ namespace dae
 			if (!m_Muted)
 			{
 				m_pRealSoundSystem->QueueSound(soundId, volume);
-				std::cout << "Playing " << std::to_string((int)soundId) << " at volume " << volume << std::endl;
+				//std::cout << "Playing " << std::to_string((int)soundId) << " at volume " << volume << std::endl;
 			}
-			else
-			{
-				std::cout << "Attempting to play " << std::to_string((int)soundId) << " but the sound is muted or the ID is invalid" << std::endl;
-			}
+			//else
+			//{
+			//	//std::cout << "Attempting to play " << std::to_string((int)soundId) << " but the sound is muted or the ID is invalid" << std::endl;
+			//}
 		}
 
 		void AddSoundToLibrary(const EffectId& soundId, const std::string& path) override

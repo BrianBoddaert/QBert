@@ -7,7 +7,7 @@
 #include "Scene.h"
 #include "MapComponent.h"
 #include "HealthComponent.h"
-
+#include "AudioClasses.h"
 using namespace dae;
 
 
@@ -40,6 +40,8 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
 
     }
 
+    ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 0.3f);
+
     const auto& renderComp = m_pGameObject->GetComponent<RenderComponent>();
     m_pTransform = m_pGameObject->GetComponent<TransformComponent>();
     const auto& currentSrcRect = renderComp->GetSrcRect();
@@ -66,6 +68,7 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
     if (!isOnMap)
     {
         // Player jumped off the map
+        ServiceLocator::GetSoundSystem().QueueSound(EffectId::Fall, 0.3f);
         m_FallingToDeath = true;
     }
 

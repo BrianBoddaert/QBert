@@ -84,11 +84,14 @@ void Minigin::Initialize()
 	m_WindowSurface = SDL_GetWindowSurface(m_Window);
 
 	ServiceLocator::SetSoundSystem(new LoggingSoundSystem(new SdlSoundSystem()));
-	ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fire, "../Data/bruh.wav");
+	ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Jump, "../Data/Audio/jump.mp3");
+	ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fall, "../Data/Audio/fall.mp3");
+	ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Lift, "../Data/Audio/lift.mp3");
+	ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Victory, "../Data/Audio/victory.mp3");
 	//ServiceLocator::GetSoundSystem().AddSoundToLibrary(MusicId::Ambient, "../Data/royaltyFreeSong.mp3");
 
 	//ServiceLocator::GetSoundSystem().QueueSound(MusicId::Ambient,0.3f);
-//	Mix_Music* music = Mix_LoadMUS("../Data/mortalkombat.mp3"); // Wav, mp3 both work
+	////Mix_Music* music = Mix_LoadMUS("../Data/mortalkombat.mp3"); // Wav, mp3 both work
 
 	//ServiceLocator::GetSoundSystem().QueueSound(AudioId::Fire, 1.0f);
 

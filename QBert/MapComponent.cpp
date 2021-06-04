@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include "InputManager.h"
+
 //Static variables Init
 
 using namespace dae;
@@ -178,7 +179,7 @@ void MapComponent::Update(float deltaT)
 {
 
 
-
+	
 
 	if (m_LevelFinished)
 	{
@@ -216,6 +217,7 @@ void MapComponent::NextMap()
 	m_LevelFinished = false;
 	m_LevelFinishedColorChangeCount = 0;
 	auto scene = SceneManager::GetInstance().GetCurrentScene();
+
 	if (scene->GetGameMode() == GameMode::SinglePlayer)
 	{
 		auto player = scene->GetPlayer(0);

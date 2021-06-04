@@ -12,6 +12,7 @@
 #include "TransformComponent.h"
 #include "MoveComponent.h"
 #include "InputManager.h"
+#include "AudioClasses.h"
 using namespace dae;
 
 void LevelCompleteObserver::OnNotify(const GameObject* actor, Event event)
@@ -26,6 +27,7 @@ void LevelCompleteObserver::Unlock(const GameObject* go)
 	MapComponent* mapComp = go->GetComponent<MapComponent>();
 
 	mapComp->SetLevelFinished(true);
+	ServiceLocator::GetSoundSystem().QueueSound(EffectId::Victory, 0.3f);
 	InputManager::GetInstance().LockInput(true);
 
 }
