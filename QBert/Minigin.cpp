@@ -28,6 +28,7 @@
 
 #include "IncreasePointsCommand.h"
 #include "PauseCommand.h"
+#include "SwitchSceneCommand.h"
 
 #include "LivesObserver.h"
 #include "ScoreObserver.h"
@@ -109,7 +110,6 @@ void Minigin::AssignKeys()
 	{
 		input.AssignControllerKey<PauseCommand>(ControllerButton::TriggerLeft, i);
 		//input.AssignControllerKey<DieCommand>(ControllerButton::LeftThumbStickUp, i);
-		input.AssignControllerKey<IncreasePointsCommand>(ControllerButton::RightThumbStickUp, i);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickUp, i, (int)MoveInputDirections::Up);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickLeft, i, (int)MoveInputDirections::Left);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickRight, i, (int)MoveInputDirections::Right);
@@ -127,6 +127,8 @@ void Minigin::AssignKeys()
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::A, (int)MoveInputDirections::Left);
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::S, (int)MoveInputDirections::Down);
 	input.AssignKeyboardKey<MoveCommand>(KeyboardButton::D, (int)MoveInputDirections::Right);
+
+	input.AssignKeyboardKey<SwitchSceneCommand>(KeyboardButton::PLUS, 0);
 }
 
 void Minigin::LoadSinglePlayerScene() const
@@ -482,9 +484,10 @@ void Minigin::LoadVersusScene() const
 
 void Minigin::LoadGame() const
 {
-	
-	LoadVersusScene();
 
+	LoadCoOpScene();
+	LoadVersusScene();
+	LoadSinglePlayerScene();
 }
 
 void Minigin::Cleanup()

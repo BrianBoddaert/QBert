@@ -16,6 +16,7 @@ using namespace dae;
 EnemyManager::EnemyManager()
 	: m_SpawnTimer{0.0f}
 	, m_SpawnEnemyInterval{7.5f}
+	, m_EnemyCounter{0}
 {
 
 }
@@ -36,7 +37,10 @@ void EnemyManager::SpawnCoily()
 	auto scene = SceneManager::GetInstance().GetCurrentScene();
 	SDL_Surface* windowSurface = Minigin::GetWindowSurface();
 
-	auto coily = std::make_shared<GameObject>("Coily");
+	std::string name = "Coily";
+	
+	name += std::to_string(m_CoilyCount);
+	auto coily = std::make_shared<GameObject>(name);
 
 	SDL_Rect srcRect = { 0,32,16,32 };
 	const dae::Vector2 srcRectHalf = { 8,16 };
@@ -54,4 +58,22 @@ void EnemyManager::SpawnCoily()
 	CollisionManager::GetInstance().AddCollider(coily);
 
 	scene->Add(coily);
+	m_CoilyCount++;
+}
+
+void EnemyManager::ClearEnemies()
+{
+	const auto& currentScene = SceneManager::GetInstance().GetCurrentScene();
+
+	for (size_t i = 0; i < m_CoilyCount; i++)
+	{
+		std::shared_ptr<GameObject> obj = currentScene->GetObjectByName("Coily" + std::to_string(m_CoilyCount));
+		if (obj)
+		{
+
+		}
+	}
+
+
+	m_CoilyCount = 0;
 }

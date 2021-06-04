@@ -45,7 +45,8 @@ namespace dae
 		S = SDLK_s,
 		D = SDLK_d,
 		P = SDLK_p,
-		SPACE = SDLK_SPACE
+		SPACE = SDLK_SPACE,
+		PLUS = SDLK_EQUALS
 	};
 
 	using ControllerKey = std::pair<unsigned, ControllerButton>;

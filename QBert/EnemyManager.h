@@ -7,11 +7,12 @@ public:
 	EnemyManager();
 	void Update(float deltaT);
 	void SpawnCoily();
+	void ClearEnemies();
 private:
 	friend class dae::Singleton<EnemyManager>;
 
-
 	float m_SpawnTimer;
 	float m_SpawnEnemyInterval;
+	int m_CoilyCount;
 };
 

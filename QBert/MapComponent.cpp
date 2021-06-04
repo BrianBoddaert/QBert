@@ -218,7 +218,7 @@ void MapComponent::NextMap()
 	m_LevelFinishedColorChangeCount = 0;
 	auto scene = SceneManager::GetInstance().GetCurrentScene();
 
-	if (scene->GetGameMode() == GameMode::SinglePlayer)
+	if (scene->GetGameMode() == GameMode::SinglePlayer || scene->GetGameMode() == GameMode::Versus)
 	{
 		auto player = scene->GetPlayer(0);
 		TransformComponent* transformComp = player->GetComponent<TransformComponent>();
