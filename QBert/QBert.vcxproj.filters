@@ -84,6 +84,9 @@
     <ClInclude Include="SwitchSceneCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TxtLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp">
@@ -147,6 +150,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SwitchSceneCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TxtLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

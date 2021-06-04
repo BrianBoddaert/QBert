@@ -8,7 +8,7 @@
 #include "Scene.h"
 #include "SceneManager.h"
 #include "InputManager.h"
-
+#include "TxtLoader.h"
 //Static variables Init
 
 using namespace dae;
@@ -49,37 +49,51 @@ MapComponent::MapComponent(Scene& scene, const dae::Vector3& highestCubePos)
 	Initialize(scene);
 }
 
+void MapComponent::LoadMap(dae::Scene& scene)
+{
+
+	TxtLoader txtLoader("../Data/Map.txt");
+	std::vector<dae::Vector2>cubePositions = txtLoader.ReadVec3();
+
+	for (size_t i = 0; i < cubePositions.size(); i++)
+	{
+		dae::Vector2 pos = m_HighestCubePos + cubePositions[i];
+		CreateCube(i, dae::Vector3(pos.x, pos.y, 0), scene);
+	}
+
+}
+
 void MapComponent::Initialize(Scene& scene)
 {
-	CreateMap(scene);
+	LoadMap(scene);
 }
 
 
-void MapComponent::CreateMap(Scene& scene)
-{
-	//16 x24
-	int indexCounter = 0;
-	int rowCubeCount = m_FirstRowCubeCount;
-	dae::Vector3 highestCubePos = m_HighestCubePos;
-
-	for (size_t j = 0; j < m_CubeColumnCount; j++)
-	{
-		for (size_t i = 0; i < rowCubeCount; i++)
-		{
-
-			dae::Vector3 pos = highestCubePos;
-			pos.x += m_CubeOffset.x * i;
-			pos.y += m_CubeOffset.y * i;
-
-			CreateCube(indexCounter, pos, scene);
-			indexCounter++;
-		}
-		highestCubePos.x -= m_CubeOffset.x;
-		highestCubePos.y += m_CubeOffset.y;
-
-		rowCubeCount--;
-	}
-}
+//void MapComponent::CreateMap(Scene& scene)
+//{
+//	////16 x24
+//	//int indexCounter = 0;
+//	//int rowCubeCount = m_FirstRowCubeCount;
+//	//dae::Vector3 highestCubePos = m_HighestCubePos;
+//
+//	//for (size_t j = 0; j < m_CubeColumnCount; j++)
+//	//{
+//	//	for (size_t i = 0; i < rowCubeCount; i++)
+//	//	{
+//
+//	//		dae::Vector3 pos = highestCubePos;
+//	//		pos.x += m_CubeOffset.x * i;
+//	//		pos.y += m_CubeOffset.y * i;
+//
+//	//		CreateCube(indexCounter, pos, scene);
+//	//		indexCounter++;
+//	//	}
+//	//	highestCubePos.x -= m_CubeOffset.x;
+//	//	highestCubePos.y += m_CubeOffset.y;
+//
+//	//	rowCubeCount--;
+//	//}
+//}
 
 bool MapComponent::LevelCompleteCheck() const
 {

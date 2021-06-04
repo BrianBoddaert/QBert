@@ -39,6 +39,7 @@
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreObserver.h" />
     <ClInclude Include="SwitchSceneCommand.h" />
+    <ClInclude Include="TxtLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp" />
@@ -67,6 +68,7 @@
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ServiceLocator.cpp" />
     <ClCompile Include="SwitchSceneCommand.cpp" />
+    <ClCompile Include="TxtLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WillemVanOranjeEngine\WillemVanOranjeEngine.vcxproj">

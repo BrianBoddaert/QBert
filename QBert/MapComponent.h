@@ -27,7 +27,7 @@ public:
 	const Level& GetCurrentLevel() const { return m_CurrentLevel; };
 private:
 	void Initialize(dae::Scene& scene);
-	void CreateMap(dae::Scene& scene);
+	void LoadMap(dae::Scene& scene);
 	void CreateCube(const size_t& index, const dae::Vector3& pos, dae::Scene& scene);
 
 	int GetColumnNumber(const int& currentTileIndex) const;
