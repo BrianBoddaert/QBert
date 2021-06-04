@@ -1,11 +1,10 @@
 #pragma once
 #include "Component.h"
 
-namespace dae
-{
+
 
 	class TextComponent;
-	class HealthComponent : public Component
+	class HealthComponent : public dae::Component
 	{
 	public:
 		HealthComponent(const unsigned int& health);
@@ -19,4 +18,3 @@ namespace dae
 		unsigned int m_Lives;
 		bool m_Dead;
 	};
-}

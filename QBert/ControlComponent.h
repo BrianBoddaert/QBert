@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "MoveCommand.h"
-
+#include "Structs.h"
 namespace dae
 {
 	enum class QBertSprite
@@ -21,16 +21,13 @@ class ControlComponent :
 	public dae::Component
 {
 public:
-	ControlComponent();
+	ControlComponent(const dae::Vector3& spawn);
 	void Initialize();
 	void SetMoveInput(const dae::MoveInputDirections& dir, bool on);
 	void Update(float) override;
-	void SetPlayerSpawn(const glm::vec2& spawn) { m_PlayerSpawn = spawn; };
-	const glm::vec2& GetPlayerSpawn() { return m_PlayerSpawn; };
-
+	const dae::Vector3& GetSpawnPosition() const { return m_SpawnPosition; }
 private:
-	glm::vec2 m_PlayerSpawn;
-	dae::QBertSprite m_CurrentSprite;
+	const dae::Vector3 m_SpawnPosition;
 	bool m_MoveInputsActive[long(dae::MoveInputDirections::Count)];
 	bool m_Moving;
 

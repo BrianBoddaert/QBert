@@ -3,7 +3,6 @@
 
 namespace dae
 {
-
 	class TextComponent;
 	class ScoreComponent : public Component
 	{

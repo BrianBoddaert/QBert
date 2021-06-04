@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Structs.h"
 namespace dae
 {
 	class Font;
@@ -8,7 +9,7 @@ namespace dae
 	{
 	public:
 		void Update(float deltaT) override;
-		void Render(const glm::vec2& pos, const glm::vec2& scale = { 1,1 }) const override;
+		void Render(const Vector2& pos, const Vector2& scale = { 1,1 }) const override;
 
 		void SetText(const std::string& text);
 

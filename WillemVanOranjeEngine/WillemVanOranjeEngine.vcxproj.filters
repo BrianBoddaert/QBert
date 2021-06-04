@@ -57,7 +57,10 @@
     <ClCompile Include="Subject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionManager.cpp">
+    <ClCompile Include="BaseCollisionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Structs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,7 +119,10 @@
     <ClInclude Include="SceneObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionManager.h">
+    <ClInclude Include="BaseCollisionManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

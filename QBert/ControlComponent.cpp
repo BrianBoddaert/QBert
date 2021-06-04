@@ -2,11 +2,13 @@
 #include "ControlComponent.h"
 #include "MoveComponent.h"
 #include "InputManager.h"
+
 using namespace dae;
 
-ControlComponent::ControlComponent()
-	:m_CurrentSprite{ QBertSprite::DownRight }
+ControlComponent::ControlComponent(const dae::Vector3& spawn)
+	:m_SpawnPosition{ spawn }
 {
+
 	Initialize();
 }
 
@@ -22,21 +24,22 @@ void ControlComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
 
 void ControlComponent::Update(float)
 {
-	MoveComponent* animComp = m_pGameObject->GetComponent<MoveComponent>();
+	MoveComponent* moveComp = m_pGameObject->GetComponent<MoveComponent>();
+	QBertSprite currentSprite;
 
-	if (animComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
+	if (moveComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
 		return;
 
 	if (m_MoveInputsActive[(int)MoveInputDirections::Down] && m_MoveInputsActive[(int)MoveInputDirections::Left])
-		m_CurrentSprite = QBertSprite::DownLeftJump;
+		currentSprite = QBertSprite::DownLeftJump;
 	else if (m_MoveInputsActive[(int)MoveInputDirections::Up] && m_MoveInputsActive[(int)MoveInputDirections::Left])
-		m_CurrentSprite = QBertSprite::UpLeftJump;
+		currentSprite = QBertSprite::UpLeftJump;
 	else if (m_MoveInputsActive[(int)MoveInputDirections::Down] && m_MoveInputsActive[(int)MoveInputDirections::Right])
-		m_CurrentSprite = QBertSprite::DownRightJump;
+		currentSprite = QBertSprite::DownRightJump;
 	else if (m_MoveInputsActive[(int)MoveInputDirections::Up] && m_MoveInputsActive[(int)MoveInputDirections::Right])
-		m_CurrentSprite = QBertSprite::UpRightJump;
+		currentSprite = QBertSprite::UpRightJump;
 	else
 		return;
 
-	animComp->ActivateJump(m_CurrentSprite);
+	moveComp->ActivateJump(currentSprite);
 }

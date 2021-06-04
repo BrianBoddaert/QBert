@@ -5,17 +5,17 @@
 
 namespace dae
 {
-	class CollisionManager final : public dae::Singleton<CollisionManager >
+	class BaseCollisionManager
 	{
 	public:
-		CollisionManager();
-		void Update();
+		BaseCollisionManager();
+		void Update(float deltaT);
 		void AddCollider(const std::shared_ptr<GameObject>& gameObject);
-	private:
-		friend class dae::Singleton<CollisionManager>;
+	protected:
+	//	friend class dae::Singleton<BaseCollisionManager>;
 
 		bool IsColliding(std::shared_ptr<GameObject> obj1, std::shared_ptr<GameObject> obj2);
-		void CollisionEffect(std::shared_ptr<GameObject> player, std::shared_ptr<GameObject> collider);
+		virtual void CollisionEffect(std::shared_ptr<GameObject> player, std::shared_ptr<GameObject> collider) = 0;
 
 		std::vector<std::shared_ptr<GameObject>> m_pColliders;
 		std::vector<std::shared_ptr<GameObject>> m_pPlayers;

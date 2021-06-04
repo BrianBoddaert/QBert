@@ -19,7 +19,7 @@ RenderComponent::RenderComponent()
 
 RenderComponent::RenderComponent(const SDL_Rect& src)
 	:m_SrcRect{ src }
-	,m_SpritePixelSize{src.w,src.h}
+	,m_SpritePixelSize{float(src.w),float(src.h)}
 {
 }
 
@@ -34,7 +34,7 @@ void RenderComponent::Update(float)
 
 }
 
-void RenderComponent::Render(const glm::vec2& pos, const glm::vec2& scale) const
+void RenderComponent::Render(const dae::Vector2& pos, const dae::Vector2& scale) const
 {
 	if (m_SrcRect.x == 0 && m_SrcRect.y == 0 && m_SrcRect.w == 0 && m_SrcRect.h == 0)
 	{

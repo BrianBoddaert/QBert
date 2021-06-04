@@ -32,6 +32,8 @@
 #include "LivesObserver.h"
 #include "ScoreObserver.h"
 #include "LevelCompleteObserver.h"
+#include "CollisionManager.h"
+#include "EnemyManager.h"
 
 #include <Xinput.h>
 #include <glm\vec2.hpp>
@@ -42,6 +44,7 @@ using namespace std::chrono;
 using namespace dae;
 
 float Minigin::MsPerUpdate = 0.02f;
+SDL_Surface* Minigin::m_WindowSurface = nullptr;
 
 void Minigin::Initialize()
 {
@@ -77,6 +80,8 @@ void Minigin::Initialize()
 	}
 
 	Renderer::GetInstance().Init(m_Window);
+
+	m_WindowSurface = SDL_GetWindowSurface(m_Window);
 
 	ServiceLocator::SetSoundSystem(new LoggingSoundSystem(new SdlSoundSystem()));
 	ServiceLocator::GetSoundSystem().AddSoundToLibrary(EffectId::Fire, "../Data/bruh.wav");
@@ -123,7 +128,7 @@ void Minigin::AssignKeys()
 
 void Minigin::LoadSinglePlayerScene() const
 {
-	SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
+
 
 	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
 
@@ -133,7 +138,7 @@ void Minigin::LoadSinglePlayerScene() const
 
 		go->AddComponent(new TransformComponent());
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
-		auto textComp = new TextComponent("FPS", font);
+		auto textComp = new dae::TextComponent("FPS", font);
 		go->AddComponent(textComp);
 		go->AddComponent(new FPSComponent(textComp));
 		scene.Add(go);
@@ -142,8 +147,8 @@ void Minigin::LoadSinglePlayerScene() const
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
 		auto go = std::make_shared<GameObject>("HowToPlay");
 		go->AddComponent(new TransformComponent());
-		go->AddComponent(new TextComponent("How to play: LeftThumbUp to die, RightThumbUp to earn 25 points, controller1 does this for player1, controller2 for player2, A,B,X and Y to fire, duck, fart and jump ", font, .4f));
-		go->SetPosition(50, 150);
+		go->AddComponent(new dae::TextComponent("How to play: LeftThumbUp to die, RightThumbUp to earn 25 points, controller1 does this for player1, controller2 for player2, A,B,X and Y to fire, duck, fart and jump ", font, .4f));
+		go->SetPosition(50, 150,10);
 		scene.Add(go);
 	}
 	//go = std::make_shared<GameObject>("Logo");
@@ -156,49 +161,48 @@ void Minigin::LoadSinglePlayerScene() const
 	//font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
 	//go = std::make_shared<GameObject>("Header");
 	//go->AddComponent(new TransformComponent());
-	//go->AddComponent(new TextComponent("Programming 4 Assignment", font));
+	//go->AddComponent(new dae::TextComponent("Programming 4 Assignment", font));
 	//go->SetPosition(80, 20);
 	//scene.Add(go);
 	{
 		auto map = std::make_shared<GameObject>("Map");
 		//250,200
-		const glm::vec2 highestCubePos = { windowSurface->w / 2, windowSurface->h / 2 };
+		const dae::Vector3 highestCubePos = { float(m_WindowSurface->w / 2), float(m_WindowSurface->h / 2),0 };
 		map->AddComponent(new MapComponent(scene, highestCubePos));
 		map->AddWatcher(new LevelCompleteObserver());
 		scene.SetCurrentMap(map);
 	}
 	{
 		auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
-		scoreDisplay->AddComponent(new TransformComponent({ 200,0 }, 1.0f));
+		scoreDisplay->AddComponent(new TransformComponent({ 200,0,10 }, 1.0f));
 
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto scoreCounter = new TextComponent("Score: 0", font);
+		auto scoreCounter = new dae::TextComponent("Score: 0", font);
 		scoreDisplay->AddComponent(scoreCounter);
 
 		scene.Add(scoreDisplay);
 
 		auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
 		livesDisplay->AddComponent(new TransformComponent());
-		livesDisplay->SetPosition(400, 0);
+		livesDisplay->SetPosition(400, 0,10);
 
 		font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto livesCounter = new TextComponent("Remaining lives: 3", font);
+		auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
 		livesDisplay->AddComponent(livesCounter);
 
 		scene.Add(livesDisplay);
 
 		auto player = std::make_shared<GameObject>("Player1");
-		ControlComponent* controlComponent = new ControlComponent();  // ControlComponent();
+		const dae::Vector2 playerHalfSize = { 8,8 };
+		const dae::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,0 };
+		ControlComponent* controlComponent = new ControlComponent(playerPos);  // ControlComponent();
 
 		player->AddComponent(controlComponent);
 
 		SDL_Rect playerSrcRect = { 0,0,16,16 };
-		const glm::vec2 playerHalfSize = { 8,8 };
+
 		player->AddComponent(new RenderComponent(playerSrcRect));
 		player->SetTexture("Textures/Qbert2.png");
-
-		const glm::vec2 playerPos = { windowSurface->w / 2 + playerHalfSize.x, windowSurface->h / 2 - playerHalfSize.y };
-		controlComponent->SetPlayerSpawn(playerPos);
 
 		player->AddComponent(new TransformComponent(playerPos, 1.0f));
 		//player->SetPosition(playerPos.x, playerPos.y);
@@ -217,9 +221,9 @@ void Minigin::LoadSinglePlayerScene() const
 		playerDiedPopup->AddComponent(new TransformComponent());
 		playerDiedPopup->AddComponent(new TimerComponent());
 		playerDiedPopup->SetEnabled(false);
-		playerDiedPopup->SetPosition(400, 400);
+		playerDiedPopup->SetPosition(400, 400,10);
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto textComp = new TextComponent("Player died", font);
+		auto textComp = new dae::TextComponent("Player died", font);
 		playerDiedPopup->AddComponent(textComp);
 
 		scene.Add(playerDiedPopup);
@@ -229,14 +233,13 @@ void Minigin::LoadSinglePlayerScene() const
 
 void Minigin::LoadCoOpScene() const
 {
-	SDL_Surface* windowSurface = SDL_GetWindowSurface(m_Window);
 
 	auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)GameMode::CoOp);
 
 	
 	auto map = std::make_shared<GameObject>("Map");
 	//250,200
-	const glm::vec2 highestCubePos = { windowSurface->w / 2, windowSurface->h / 2 };
+	const dae::Vector3 highestCubePos = { (float)m_WindowSurface->w / 2,  (float)m_WindowSurface->h / 2,0 };
 	MapComponent* mapComp = new MapComponent(scene, highestCubePos);
 	map->AddComponent(mapComp);
 	map->AddWatcher(new LevelCompleteObserver());
@@ -245,40 +248,40 @@ void Minigin::LoadCoOpScene() const
 	{
 		{
 			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
-			scoreDisplay->AddComponent(new TransformComponent({ 200,0 }, 1.0f));
+			scoreDisplay->AddComponent(new TransformComponent({ 200,0,10 }, 1.0f));
 
 			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new TextComponent("Score: 0", font);
+			auto scoreCounter = new dae::TextComponent("Score: 0", font);
 			scoreDisplay->AddComponent(scoreCounter);
 
 			scene.Add(scoreDisplay);
 
 			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
 			livesDisplay->AddComponent(new TransformComponent());
-			livesDisplay->SetPosition(400, 0);
+			livesDisplay->SetPosition(400, 0,10);
 
 			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new TextComponent("Remaining lives: 3", font);
+			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
 			livesDisplay->AddComponent(livesCounter);
 
 			scene.Add(livesDisplay);
 		}
 		{
 			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
-			scoreDisplay->AddComponent(new TransformComponent({ windowSurface->w - 200.0f,0 }, 1.0f));
+			scoreDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 200.0f,0.0f,10 }, 1.0f));
 
 			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new TextComponent("Score: 0", font);
+			auto scoreCounter = new dae::TextComponent("Score: 0", font);
 			scoreDisplay->AddComponent(scoreCounter);
 
 			scene.Add(scoreDisplay);
 
 			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
 			livesDisplay->AddComponent(new TransformComponent());
-			livesDisplay->SetPosition(windowSurface->w - 400.0f, 0);
+			livesDisplay->SetPosition(m_WindowSurface->w - 400.0f, 0,10);
 
 			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new TextComponent("Remaining lives: 3", font);
+			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
 			livesDisplay->AddComponent(livesCounter);
 
 			scene.Add(livesDisplay);
@@ -286,17 +289,19 @@ void Minigin::LoadCoOpScene() const
 
 		{
 			auto player = std::make_shared<GameObject>("Player1");
-			ControlComponent* controlComponent = new ControlComponent();
+
+			const dae::Vector2 playerHalfSize = { 8,8 };
+			const dae::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) - 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,6 };
+
+			ControlComponent* controlComponent = new ControlComponent(playerPos);
 
 			player->AddComponent(controlComponent);
-
 			SDL_Rect playerSrcRect = { 0,0,16,16 };
-			const glm::vec2 playerHalfSize = { 8,8 };
+
 			player->AddComponent(new RenderComponent(playerSrcRect));
 			player->SetTexture("Textures/Qbert2.png");
-			//const glm::vec2& cubeOffset =  mapComp->GetCubeOffset();
-			const glm::vec2 playerPos = { (windowSurface->w / 2 + playerHalfSize.x) - 96, (windowSurface->h / 2 - playerHalfSize.y) + 144 };
-			controlComponent->SetPlayerSpawn(playerPos);
+			//const dae::Vector2& cubeOffset =  mapComp->GetCubeOffset();
+
 
 			player->AddComponent(new TransformComponent(playerPos, 1.0f));
 
@@ -306,22 +311,23 @@ void Minigin::LoadCoOpScene() const
 			player->AddWatcher(new LivesObserver());
 			player->AddWatcher(new ScoreObserver());
 			player->AddComponent(new MoveComponent(27));
-
+			player->AddTag(dae::Tag::Player);
+			player->AddTag(dae::Tag::Player1);
+			CollisionManager::GetInstance().AddCollider(player);
 			scene.AddPlayer(player);
 		}
 		{
 			auto player = std::make_shared<GameObject>("Player2");
-			ControlComponent* controlComponent = new ControlComponent();
-
-			player->AddComponent(controlComponent);
 
 			SDL_Rect playerSrcRect = { 0,0,16,16 };
-			const glm::vec2 playerHalfSize = { 8,8 };
+			const dae::Vector2 playerHalfSize = { 8,8 };
 			player->AddComponent(new RenderComponent(playerSrcRect));
 			player->SetTexture("Textures/Qbert2.png");
-			//const glm::vec2& cubeOffset =  mapComp->GetCubeOffset();
-			const glm::vec2 playerPos = { (windowSurface->w / 2 + playerHalfSize.x) + 96, (windowSurface->h / 2 - playerHalfSize.y) + 144 };
-			controlComponent->SetPlayerSpawn(playerPos);
+			//const dae::Vector2& cubeOffset =  mapComp->GetCubeOffset();
+			const dae::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) + 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,6 };
+			ControlComponent* controlComponent = new ControlComponent(playerPos);
+
+			player->AddComponent(controlComponent);
 
 			player->AddComponent(new TransformComponent(playerPos, 1.0f));
 
@@ -331,7 +337,9 @@ void Minigin::LoadCoOpScene() const
 			player->AddWatcher(new LivesObserver());
 			player->AddWatcher(new ScoreObserver());
 			player->AddComponent(new MoveComponent(6));
-
+			player->AddTag(dae::Tag::Player);
+			player->AddTag(dae::Tag::Player2);
+			CollisionManager::GetInstance().AddCollider(player);
 			scene.AddPlayer(player);
 		}
 	}
@@ -340,9 +348,9 @@ void Minigin::LoadCoOpScene() const
 		playerDiedPopup->AddComponent(new TransformComponent());
 		playerDiedPopup->AddComponent(new TimerComponent());
 		playerDiedPopup->SetEnabled(false);
-		playerDiedPopup->SetPosition(400, 400);
+		playerDiedPopup->SetPosition(400, 400,10);
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto textComp = new TextComponent("Player died", font);
+		auto textComp = new dae::TextComponent("Player died", font);
 		playerDiedPopup->AddComponent(textComp);
 
 		scene.Add(playerDiedPopup);
@@ -389,6 +397,8 @@ void Minigin::Run()
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();
+	auto& enemyManager = EnemyManager::GetInstance();
+	auto& collisionManager = CollisionManager::GetInstance();
 	auto& input = InputManager::GetInstance();
 
 	bool doContinue = true;
@@ -410,6 +420,8 @@ void Minigin::Run()
 		while (lag >= MsPerUpdate)
 		{
 			sceneManager.Update(deltaTime);
+			enemyManager.Update(deltaTime);
+			collisionManager.Update(deltaTime);
 			lag -= MsPerUpdate;
 		}
 

@@ -15,7 +15,7 @@ using namespace dae;
 const int m_MaxCubes = 28;
 const int m_SideLength = 7;
 
-MapComponent::MapComponent(Scene& scene, const glm::vec2& highestCubePos)
+MapComponent::MapComponent(Scene& scene, const dae::Vector3& highestCubePos)
 	:m_FirstRowCubeCount(7)
 	, m_CubeColumnCount(7)
 	, m_CubeSrcRect{ 0,160,32,32 }
@@ -59,14 +59,14 @@ void MapComponent::CreateMap(Scene& scene)
 	//16 x24
 	int indexCounter = 0;
 	int rowCubeCount = m_FirstRowCubeCount;
-	glm::vec2 highestCubePos = m_HighestCubePos;
+	dae::Vector3 highestCubePos = m_HighestCubePos;
 
 	for (size_t j = 0; j < m_CubeColumnCount; j++)
 	{
 		for (size_t i = 0; i < rowCubeCount; i++)
 		{
 
-			glm::vec2 pos = highestCubePos;
+			dae::Vector3 pos = highestCubePos;
 			pos.x += m_CubeOffset.x * i;
 			pos.y += m_CubeOffset.y * i;
 
@@ -106,7 +106,7 @@ int MapComponent::GetColumnNumber(const int& currentTileIndex) const
 
 }
 
-void MapComponent::CreateCube(const size_t& index, const glm::vec2& pos, Scene&)
+void MapComponent::CreateCube(const size_t& index, const dae::Vector3& pos, Scene&)
 {
 	m_Cubes[index] = std::make_shared<Cube>((int)index);
 	auto gameObj = m_Cubes[index]->GetGameObject();
@@ -119,8 +119,9 @@ void MapComponent::CreateCube(const size_t& index, const glm::vec2& pos, Scene&)
 
 
 
-bool MapComponent::GetNextCubeIndex(int& currentIndex, const QBertSprite& dir) const
+bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const QBertSprite& dir) const
 // Returns false if the player jumps off the map
+// Alters the currentIndex
 {
 	int columnIndex = GetColumnNumber(currentIndex);
 
@@ -175,6 +176,10 @@ bool MapComponent::GetNextCubeIndex(int& currentIndex, const QBertSprite& dir) c
 
 void MapComponent::Update(float deltaT)
 {
+
+
+
+
 	if (m_LevelFinished)
 	{
 		m_TileColorFlashTimer += deltaT;
@@ -200,6 +205,8 @@ void MapComponent::Update(float deltaT)
 	{
 		cube->Update(deltaT);
 	}
+
+
 }
 
 void MapComponent::NextMap()
@@ -218,8 +225,8 @@ void MapComponent::NextMap()
 		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 		if (transformComp)
 		{
-			const auto& playerSpawn = playerComp->GetPlayerSpawn();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+			const auto& playerSpawn = playerComp->GetSpawnPosition();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
 		}
 	}
 	else if (scene->GetGameMode() == GameMode::CoOp)
@@ -231,8 +238,8 @@ void MapComponent::NextMap()
 		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 		if (transformComp)
 		{
-			const auto& playerSpawn = playerComp->GetPlayerSpawn();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+			const auto& playerSpawn = playerComp->GetSpawnPosition();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
 		}
 
 		auto player2 = scene->GetPlayer(1);
@@ -242,8 +249,8 @@ void MapComponent::NextMap()
 		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
 		if (transformComp)
 		{
-			const auto& playerSpawn = playerComp->GetPlayerSpawn();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+			const auto& playerSpawn = playerComp->GetSpawnPosition();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
 		}
 	}
 
@@ -254,7 +261,7 @@ void MapComponent::NextMap()
 	}
 }
 
-void MapComponent::Render(const glm::vec2&, const glm::vec2&) const
+void MapComponent::Render(const dae::Vector2&, const dae::Vector2&) const
 {
 
 	for (const auto& cube : m_Cubes)
@@ -264,7 +271,7 @@ void MapComponent::Render(const glm::vec2&, const glm::vec2&) const
 	}
 }
 
-const glm::vec2& MapComponent::GetCubeOffset() const
+const dae::Vector2& MapComponent::GetCubeOffset() const
 {
 	return m_CubeOffset;
 }

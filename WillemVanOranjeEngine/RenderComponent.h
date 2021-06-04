@@ -14,16 +14,16 @@ namespace dae
 
 		~RenderComponent()override;
 		 void Update(float deltaT) override;
-		 void Render(const glm::vec2& pos, const glm::vec2& scale) const override;
+		 void Render(const Vector2& pos, const Vector2& scale) const override;
 		 Texture2D* GetTexture();
 		 void SetTexture(Texture2D* texture);
 		 const SDL_Rect& GetSrcRect() const;
 		 void SetSrcRect(const SDL_Rect&);
 
-		 const glm::vec2& GetSpritePixelSize() { return m_SpritePixelSize; };
+		 const Vector2& GetSpritePixelSize() { return m_SpritePixelSize; };
 	private:
 
-		const glm::vec2 m_SpritePixelSize;
+		const Vector2 m_SpritePixelSize;
 
 		Texture2D* m_pTexture{ nullptr };
 

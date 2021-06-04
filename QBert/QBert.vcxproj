@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioClasses.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="FPSComponent.h" />
@@ -32,12 +33,14 @@
     <ClInclude Include="MiniginPCH.h" />
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="MoveComponent.h" />
+    <ClInclude Include="PathFindingComponent.h" />
     <ClInclude Include="PauseCommand.h" />
     <ClInclude Include="ControlComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreObserver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
@@ -56,6 +59,7 @@
     </ClCompile>
     <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="MoveComponent.cpp" />
+    <ClCompile Include="PathFindingComponent.cpp" />
     <ClCompile Include="PauseCommand.cpp" />
     <ClCompile Include="ControlComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />

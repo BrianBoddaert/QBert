@@ -27,8 +27,8 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
 		if (transformComp)
 		{
-			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetPlayerSpawn();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetSpawnPosition();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
 		}
 		else
 		{
@@ -43,8 +43,8 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
 		if (transformComp)
 		{
-			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetPlayerSpawn();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y);
+			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetSpawnPosition();
+			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
 		}
 		else
 		{

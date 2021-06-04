@@ -171,7 +171,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="BaseCollisionManager.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -180,6 +180,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Structs.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />
@@ -188,11 +189,12 @@
     <ClCompile Include="WillemVanOranjeEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="BaseCollisionManager.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Structs.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="RenderComponent.h" />

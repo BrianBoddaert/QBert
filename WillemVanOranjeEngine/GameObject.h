@@ -27,7 +27,7 @@ namespace dae
 		void Update(float deltaT) override;
 		void Render() const override;
 		void SetTexture(const std::string& filename);
-		void SetPosition(float x, float y);
+		void SetPosition(float x, float y, float z);
 
 		void AddComponent(Component*);
 		void AddWatcher(Observer*);

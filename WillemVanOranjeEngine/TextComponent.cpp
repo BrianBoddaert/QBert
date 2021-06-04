@@ -49,7 +49,7 @@ void dae::TextComponent::Update(float)
 	}
 }
 
-void dae::TextComponent::Render(const glm::vec2& pos, const glm::vec2& scale) const
+void dae::TextComponent::Render(const dae::Vector2& pos, const dae::Vector2& scale) const
 {
 	if (m_pTexture != nullptr)
 		Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y,scale);

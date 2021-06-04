@@ -17,7 +17,7 @@ namespace dae
 	{
 		friend Scene& SceneManager::CreateScene(const std::string& name,const int gameMode);
 	public:
-		void Add(const std::shared_ptr<SceneObject>& object);
+		void Add(const std::shared_ptr<GameObject>& object);
 
 		void Update(float deltaT);
 		void Render() const;
@@ -29,23 +29,25 @@ namespace dae
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 
-		std::shared_ptr<SceneObject> GetObjectByName(const std::string& name) const; 
+		std::shared_ptr<GameObject> GetObjectByName(const std::string& name) const;
 		void AddPlayer(const std::shared_ptr<GameObject>& player);
 		std::shared_ptr<GameObject> GetPlayer(int index) const;
 		void AddMap(const std::shared_ptr<GameObject>& map);
 		std::shared_ptr<GameObject> Getmap(int index) const;
 		void SetCurrentMap(const std::shared_ptr<GameObject>&);
 		std::shared_ptr<GameObject> GetCurrentMap() const;
+		const std::vector< std::shared_ptr<GameObject>>& GetPlayers() const {return m_pPlayers;}
 
 		const GameMode& GetGameMode() const { return m_GameMode; };
+		void SortOnZAxis();
 	private: 
 		explicit Scene(const std::string& name, const GameMode& gameMode);
-
+	//	bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b);
 		const GameMode m_GameMode;
 		const std::string m_Name;
 		std::vector< std::shared_ptr<GameObject>> m_pPlayers{};
 
-		std::vector < std::shared_ptr<SceneObject>> m_Objects{};
+		std::vector < std::shared_ptr<GameObject>> m_Objects{};
 
 		std::vector< std::shared_ptr<GameObject>> m_pMaps{};
 		std::shared_ptr<GameObject> m_CurrentMap;

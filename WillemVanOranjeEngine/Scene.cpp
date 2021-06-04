@@ -1,6 +1,8 @@
 #include <iostream>
+#include <algorithm>
 #include "Scene.h"
 #include "SceneManager.h"
+#include "TransformComponent.h"
 
 using namespace dae;
 
@@ -12,13 +14,14 @@ Scene::Scene(const std::string& name,const GameMode& gameMode)
 
 Scene::~Scene() = default;
 
-void Scene::Add(const std::shared_ptr<SceneObject>& object)
+void Scene::Add(const std::shared_ptr<GameObject>& object)
 {
 	m_Objects.push_back(object);
 }
 
 void Scene::Update(float deltaT)
 {
+
 	m_CurrentMap->Update(deltaT);
 
 	for(auto& object : m_Objects)
@@ -31,20 +34,26 @@ void Scene::Update(float deltaT)
 	}
 }
 
+bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
+{
+	return (a->GetComponent<TransformComponent>()->GetPosition().z < b->GetComponent<TransformComponent>()->GetPosition().z);
+}
+
+void Scene::SortOnZAxis()
+{
+	std::sort(m_Objects.begin(), m_Objects.end(), CompareZAxis);
+}
+
+
 void Scene::Render() const
 {
-	//for (const auto& player : m_pPlayers)
-	//{
-	//	if (player->GetComponent<MoveComponent>()->GetIsFallingToDeathBehindMap())
-	//		player->Render();
-	//}
+
 	m_CurrentMap->Render();
 
-	for (const auto& player : m_pPlayers)
-	{
-		//if (!player->GetComponent<MoveComponent>()->GetIsFallingToDeathBehindMap())
-			player->Render();
-	}
+	//for (const auto& player : m_pPlayers)
+	//{
+	//		player->Render();
+	//}
 	for (const auto& object : m_Objects)
 	{
 		object->Render();
@@ -56,7 +65,7 @@ const std::string& Scene::GetTag() const
 	return m_Name;
 }
 
-std::shared_ptr<SceneObject> Scene::GetObjectByName(const std::string& name) const
+std::shared_ptr<GameObject> Scene::GetObjectByName(const std::string& name) const
 {
 	for (const auto& object : m_Objects)
 	{
@@ -69,6 +78,7 @@ std::shared_ptr<SceneObject> Scene::GetObjectByName(const std::string& name) con
 void Scene::AddPlayer(const std::shared_ptr<GameObject>& player)
 {
 	m_pPlayers.push_back(player);
+	m_Objects.push_back(player);
 }
 
 std::shared_ptr<GameObject> Scene::GetPlayer(int index) const

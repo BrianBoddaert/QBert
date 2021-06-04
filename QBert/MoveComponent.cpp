@@ -12,22 +12,27 @@ using namespace dae;
 
 
 MoveComponent::MoveComponent(int currentCubeIndex)
-    : m_Speed{ 50 }
+    : m_Speed{ 50.0f }
     , m_IsMoving{ false }
     , m_StartCubeIndex{ currentCubeIndex }
     , m_CurrentCubeIndex{ currentCubeIndex }
     , m_FallingToDeath{ false }
     , m_Direction{ QBertSprite::DownLeft }
 {
-    const glm::vec2& cubeOffset = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetCubeOffset();
+    const dae::Vector2& cubeOffset = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetCubeOffset();
     m_MoveDistance = cubeOffset * GAMESCALE;
 }
 
 void MoveComponent::ActivateJump(const QBertSprite& dir)
 {
+    if (m_IsMoving)
+        return;
+
     const auto& renderComp = m_pGameObject->GetComponent<RenderComponent>();
     m_pTransform = m_pGameObject->GetComponent<TransformComponent>();
-    renderComp->SetSrcRect(SDL_Rect{ (int)dir * (int)renderComp->GetSpritePixelSize().x,0,(int)renderComp->GetSpritePixelSize().x,(int)renderComp->GetSpritePixelSize().y });
+    const auto& currentSrcRect = renderComp->GetSrcRect();
+    const auto& spritePixelSize = renderComp->GetSpritePixelSize();
+    renderComp->SetSrcRect(SDL_Rect{ (int)dir * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
 
     m_JumpStartPos = m_pTransform->GetPosition();
     m_IsMoving = true;
@@ -35,18 +40,18 @@ void MoveComponent::ActivateJump(const QBertSprite& dir)
     m_Direction = dir;
     m_MovementDistanceRatio = (m_MoveDistance.y / m_MoveDistance.x);
     m_JumpHeight = m_MoveDistance.y / 2.0f;
-    m_SpeedRatiod = { m_Speed,m_Speed * m_MovementDistanceRatio * (m_MoveDistance.y / m_JumpHeight) }; // hoi
+    m_SpeedRatiod = { m_Speed,m_Speed * m_MovementDistanceRatio * (m_MoveDistance.y / m_JumpHeight) };
 
     if ((int)m_Direction >= (int)QBertSprite::DownRight)
         m_JumpHeight = m_MoveDistance.y / 2.0f;
     else
         m_JumpHeight = m_MoveDistance.y * 1.5f; // Increase jumpheight if it has to jump upwards
 
-
-
     MapComponent* CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
+    
+    bool isOnMap = CurrentMap->SetNextCubeIndexAndCheckIfItsOnACube(m_CurrentCubeIndex, dir);
 
-    if (!CurrentMap->GetNextCubeIndex(m_CurrentCubeIndex, dir))
+    if (!isOnMap)
     {
         // Player jumped off the map
         m_FallingToDeath = true;
@@ -59,26 +64,25 @@ void MoveComponent::CorrectPosition()
 
     if (m_Direction == QBertSprite::DownRightJump)
     {
-        m_pTransform->SetPosition(m_JumpStartPos + m_MoveDistance);
+        m_pTransform->SetPosition(m_JumpStartPos.x + m_MoveDistance.x, m_JumpStartPos.y + m_MoveDistance.y, m_JumpStartPos.z + 1);
     }
     else if (m_Direction == QBertSprite::DownLeftJump)
     {
-
-        m_pTransform->SetPosition(m_JumpStartPos + glm::vec2(-m_MoveDistance.x, m_MoveDistance.y));
+        m_pTransform->SetPosition(m_JumpStartPos.x -m_MoveDistance.x, m_JumpStartPos.y + m_MoveDistance.y, m_JumpStartPos.z + 1);
     }
     else if (m_Direction == QBertSprite::UpLeftJump)
     {
-        m_pTransform->SetPosition(m_JumpStartPos + -m_MoveDistance);
+        m_pTransform->SetPosition(m_JumpStartPos.x - m_MoveDistance.x, m_JumpStartPos.y - m_MoveDistance.y, m_JumpStartPos.z -1);
     }
     else if (m_Direction == QBertSprite::UpRightJump)
     {
-        m_pTransform->SetPosition(m_JumpStartPos + glm::vec2(m_MoveDistance.x, -m_MoveDistance.y));
+        m_pTransform->SetPosition(m_JumpStartPos.x + m_MoveDistance.x, m_JumpStartPos.y - m_MoveDistance.y, m_JumpStartPos.z - 1);
     }
 }
 
 void MoveComponent::Jump(float deltaT)
 {
-    glm::vec2 movement = m_pTransform->GetPosition();
+    dae::Vector3 movement = m_pTransform->GetPosition();
 
     if (m_Direction == QBertSprite::DownRightJump || m_Direction == QBertSprite::UpRightJump)
         movement.x += deltaT * m_SpeedRatiod.x;
@@ -108,14 +112,19 @@ void MoveComponent::Jump(float deltaT)
         //m_pTransform->SetPosition(m_JumpStartPos + m_MoveDistance);
         // Direction - 1 = not jumping version of sprite
         int NonJumpingSprite = (int)m_Direction - 1;
-        renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)renderComp->GetSpritePixelSize().x,0,(int)renderComp->GetSpritePixelSize().x,(int)renderComp->GetSpritePixelSize().y });
 
+        const auto& currentSrcRect = renderComp->GetSrcRect();
+        const auto& spritePixelSize = renderComp->GetSpritePixelSize();
+        renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
+
+        if (m_pGameObject->HasTag(dae::Tag::Player))
         CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true);
+
         m_IsMoving = false;
     }
     else
     {
-        m_pTransform->SetPosition(movement.x, movement.y);
+        m_pTransform->SetPosition(movement);
     }
 
 
@@ -123,7 +132,7 @@ void MoveComponent::Jump(float deltaT)
 
 void MoveComponent::FallToDeath(float deltaT)
 {
-    glm::vec2 movement = m_pTransform->GetPosition();
+    dae::Vector3 movement = m_pTransform->GetPosition();
 
     if (m_Direction == QBertSprite::DownRightJump || m_Direction == QBertSprite::UpRightJump)
         movement.x += deltaT * m_SpeedRatiod.x;
@@ -149,7 +158,10 @@ void MoveComponent::FallToDeath(float deltaT)
 
         // Direction - 1 = not jumping version of sprite
         int NonJumpingSprite = (int)m_Direction - 1;
-        renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)renderComp->GetSpritePixelSize().x,0,(int)renderComp->GetSpritePixelSize().x,(int)renderComp->GetSpritePixelSize().y });
+
+        const auto& currentSrcRect = renderComp->GetSrcRect();
+        const auto& spritePixelSize = renderComp->GetSpritePixelSize();
+        renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
 
         m_pGameObject->GetComponent<HealthComponent>()->Die();
         m_IsMoving = false;
@@ -157,7 +169,7 @@ void MoveComponent::FallToDeath(float deltaT)
     }
     else
     {
-        m_pTransform->SetPosition(movement.x, movement.y);
+        m_pTransform->SetPosition(movement);
     }
 
 }

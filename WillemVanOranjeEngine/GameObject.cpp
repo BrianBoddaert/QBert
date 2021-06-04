@@ -42,8 +42,8 @@ void dae::GameObject::Render() const
 	if (!m_Enabled) return;
 	TransformComponent* transform = GetComponent<TransformComponent>();
 
-	glm::vec2 pos;
-	glm::vec2 scale;
+	Vector3 pos;
+	Vector3 scale;
 
 	if (transform)
 	{
@@ -52,13 +52,13 @@ void dae::GameObject::Render() const
 	}
 	else
 	{
-		pos = glm::vec2(1, 1);
-		scale = glm::vec2(1, 1);
+		pos = Vector3(1, 1,1);
+		scale = Vector3(1, 1,1);
 	}
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 
-		m_Components[i]->Render(pos, scale);
+		m_Components[i]->Render(dae::Vector2(pos.x,pos.y), dae::Vector2(scale.x, scale.y));
 	}
 }
 
@@ -77,14 +77,15 @@ void dae::GameObject::SetTexture(const std::string& filename)
 
 }
 
-void dae::GameObject::SetPosition(float x, float y)
+void dae::GameObject::SetPosition(float x, float y, float z)
 {
 	TransformComponent* transform = GetComponent<TransformComponent>();
 
 	if (!transform) { std::cout << "WARNING: Set position called on gameObject without transform component" << std::endl; return; }
 
-	transform->SetPosition(x,y);
+	transform->SetPosition(x,y,z);
 }
+
 
 void dae::GameObject::AddComponent(Component* component)
 {

@@ -35,7 +35,7 @@ void dae::Renderer::Destroy()
 	}
 }
 
-void ScaleSDLRect(SDL_Rect& rect, const glm::vec2& scale)
+void ScaleSDLRect(SDL_Rect& rect, const dae::Vector2& scale)
 {
 	float width = (float)rect.w;
 	float height = (float)rect.h;
@@ -45,7 +45,7 @@ void ScaleSDLRect(SDL_Rect& rect, const glm::vec2& scale)
 }
 
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const glm::vec2& scale) const
+void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const dae::Vector2& scale) const
 {
 	SDL_Rect dst;
 	dst.x = static_cast<int>(x);
@@ -56,7 +56,7 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height, const glm::vec2& scale) const
+void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const float width, const float height, const dae::Vector2& scale) const
 {
 	SDL_Rect dst;
 	dst.x = static_cast<int>(x);
@@ -69,7 +69,7 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const SDL_Rect& src, const glm::vec2& scale) const
+void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const float y, const SDL_Rect& src, const dae::Vector2& scale) const
 {
 	//160 HEIGHT
 	// 32 x 32 
@@ -84,7 +84,7 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, SDL_Rect& dst, const SDL_Rect& src, const glm::vec2& scale) const
+void dae::Renderer::RenderTexture(const Texture2D& texture, SDL_Rect& dst, const SDL_Rect& src, const dae::Vector2& scale) const
 {
 	dst.w = src.w;
 	dst.h = src.h;

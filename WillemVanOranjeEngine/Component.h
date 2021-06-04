@@ -1,8 +1,8 @@
 #pragma once
 #pragma warning(push)
 #pragma warning (disable:4201)
-#include <glm/vec2.hpp>
 #include "GameObject.h"
+#include "Structs.h"
 #pragma warning(pop)
 
 namespace dae
@@ -14,7 +14,7 @@ namespace dae
 	public:
 
 		virtual void Update(float) {};
-		virtual void Render(const glm::vec2&, const glm::vec2&) const {};
+		virtual void Render(const dae::Vector2&, const dae::Vector2&) const {};
 		virtual ~Component() {};
 
 		void SetGameObject(GameObject* obj) { m_pGameObject = obj; }
