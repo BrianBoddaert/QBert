@@ -13,10 +13,7 @@ using namespace dae;
 
 MoveComponent::MoveComponent(int currentCubeIndex)
     :BaseMoveComponent{ currentCubeIndex }
-{
-    const dae::Vector2& cubeOffset = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetCubeOffset();
-    m_MoveDistance = cubeOffset * GAMESCALE;
-}
+{}
 
 void MoveComponent::ActivateJump(const DirectionSprite& dir)
 {
@@ -121,11 +118,11 @@ void MoveComponent::Jump(float deltaT)
         CorrectPosition();
         //m_pTransform->SetPosition(m_JumpStartPos + m_MoveDistance);
         // Direction - 1 = not jumping version of sprite
-        int NonJumpingSprite = (int)m_Direction - 1;
+        int nonJumpingSprite = (int)m_Direction - 1;
 
         const auto& currentSrcRect = renderComp->GetSrcRect();
         const auto& spritePixelSize = renderComp->GetSpritePixelSize();
-        renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
+        renderComp->SetSrcRect(SDL_Rect{ nonJumpingSprite * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
 
         if (m_pGameObject->HasTag(dae::Tag::Player))
         CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true);

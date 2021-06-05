@@ -68,33 +68,6 @@ void MapComponent::Initialize(Scene& scene)
 	LoadMap(scene);
 }
 
-
-//void MapComponent::CreateMap(Scene& scene)
-//{
-//	////16 x24
-//	//int indexCounter = 0;
-//	//int rowCubeCount = m_FirstRowCubeCount;
-//	//dae::Vector3 highestCubePos = m_HighestCubePos;
-//
-//	//for (size_t j = 0; j < m_CubeColumnCount; j++)
-//	//{
-//	//	for (size_t i = 0; i < rowCubeCount; i++)
-//	//	{
-//
-//	//		dae::Vector3 pos = highestCubePos;
-//	//		pos.x += m_CubeOffset.x * i;
-//	//		pos.y += m_CubeOffset.y * i;
-//
-//	//		CreateCube(indexCounter, pos, scene);
-//	//		indexCounter++;
-//	//	}
-//	//	highestCubePos.x -= m_CubeOffset.x;
-//	//	highestCubePos.y += m_CubeOffset.y;
-//
-//	//	rowCubeCount--;
-//	//}
-//}
-
 bool MapComponent::LevelCompleteCheck() const
 {
 	for (size_t i = 0; i < m_MaxCubes; i++)
@@ -105,7 +78,7 @@ bool MapComponent::LevelCompleteCheck() const
 
 	return true;
 }
-int MapComponent::GetColumnNumber(const int& currentTileIndex) const
+int MapComponent::GetRowNumber(const int& currentTileIndex) const
 {
 	int cubeCount = m_FirstRowCubeCount;
 
@@ -121,6 +94,53 @@ int MapComponent::GetColumnNumber(const int& currentTileIndex) const
 
 }
 
+int MapComponent::GetZNumber(const int& currentTileIndex) const
+{
+	int currentZ = 0;
+	int indexCounter = 0;
+	for (int i = 0; i < m_FirstRowCubeCount; i++)
+	{
+		indexCounter = i;
+		currentZ = i;
+		for (int j = 0; j < i+1; j++)
+		{
+			if (indexCounter == currentTileIndex)
+				return currentZ;
+
+			indexCounter += 6 - j;
+		}
+
+	}
+
+	return -1;
+
+}
+
+int MapComponent::GetColumnNumber(const int& currentTileIndex) const
+{
+	int cubeColumnCount = m_CubeColumnCount;
+	int columnIndex = 0;
+	int indexCounter = 0;
+
+	for (int i = 0; i < m_FirstRowCubeCount; i++)
+	{
+		columnIndex = i;
+		indexCounter = i;
+		for (int j = 0; j < cubeColumnCount; j++)
+		{
+
+			if (currentTileIndex == indexCounter)
+				return columnIndex;
+
+			indexCounter += (m_CubeColumnCount - j);
+		}
+		cubeColumnCount--;
+	}
+
+	return -1;
+}
+
+
 void MapComponent::CreateCube(const size_t& index, const dae::Vector3& pos, Scene&)
 {
 	m_Cubes[index] = std::make_shared<Cube>((int)index);
@@ -132,54 +152,103 @@ void MapComponent::CreateCube(const size_t& index, const dae::Vector3& pos, Scen
 
 }
 
-
-
-bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const DirectionSprite& dir) const
+bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const DirectionSprite& dir, bool sideWalking) const
 // Returns false if the player jumps off the map
 // Alters the currentIndex
 {
+	int rowIndex = GetRowNumber(currentIndex);
 	int columnIndex = GetColumnNumber(currentIndex);
-
+	int zIndex = GetZNumber(currentIndex);
 	switch (dir)
 	{
 	case DirectionSprite::DownLeftJump:
 	{
-		for (size_t i = 0; i < m_SideLength; i++)
-			if (currentIndex == m_LowestBlocks[i])
+		if (sideWalking)
+		{
+			if (columnIndex == 0)
+			{
 				return false;
+			}
+			currentIndex += m_FirstRowCubeCount - zIndex + columnIndex - 1;
+		}
+		else
+		{
+			for (size_t i = 0; i < m_SideLength; i++)
+				if (currentIndex == m_LowestBlocks[i])
+					return false;
 
-		currentIndex += m_FirstRowCubeCount - columnIndex;
+			currentIndex += m_FirstRowCubeCount - rowIndex;
+
+		}
 
 		break;
 	}
 	case DirectionSprite::UpRightJump:
 	{
-		for (size_t i = 0; i < m_SideLength; i++)
-			if (currentIndex == m_MostRightBlocks[i])
+		if (sideWalking)
+		{
+			if (columnIndex == zIndex)
+			{
 				return false;
+			}
+			currentIndex -= m_FirstRowCubeCount - zIndex + columnIndex + 1;
+			
+		}
+		else
+		{
+			for (size_t i = 0; i < m_SideLength; i++)
+				if (currentIndex == m_MostRightBlocks[i])
+					return false;
 
-		int columnIndexAfterJump = columnIndex - 1;
-		currentIndex -= m_FirstRowCubeCount - columnIndexAfterJump;
+			int columnIndexAfterJump = rowIndex - 1;
+			currentIndex -= m_FirstRowCubeCount - columnIndexAfterJump;
+
+		}
 
 		break;
 	}
 	case DirectionSprite::UpLeftJump:
 	{
-		for (size_t i = 0; i < m_SideLength; i++)
-			if (currentIndex == m_MostLeftBlocks[i])
+		if (sideWalking)
+		{
+			if (columnIndex == 0)
+			{
 				return false;
+			}
+			--currentIndex;
+		}
+		else
+		{
+			for (size_t i = 0; i < m_SideLength; i++)
+				if (currentIndex == m_MostLeftBlocks[i])
+					return false;
 
-		currentIndex--;
+			currentIndex--;
+		}
+
 
 		break;
 	}
 	case DirectionSprite::DownRightJump:
 	{
-		for (size_t i = 0; i < m_SideLength; i++)
-			if (currentIndex == m_LowestBlocks[i])
+		if (sideWalking)
+		{
+			if (columnIndex == zIndex)
+			{
 				return false;
+			}
+			currentIndex -= m_FirstRowCubeCount - zIndex + columnIndex;
+			break;
+		}
+		else
+		{
+			for (size_t i = 0; i < m_SideLength; i++)
+				if (currentIndex == m_LowestBlocks[i])
+					return false;
 
-		currentIndex++;
+			currentIndex++;
+		}
+
 
 		break;
 	}
@@ -191,10 +260,6 @@ bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const
 
 void MapComponent::Update(float deltaT)
 {
-
-
-	
-
 	if (m_LevelFinished)
 	{
 		m_TileColorFlashTimer += deltaT;

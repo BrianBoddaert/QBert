@@ -8,7 +8,8 @@ namespace dae
 		Player1,
 		Player2,
 		Player,
-		Coily
+		Coily,
+		WrongWay
 	};
 
 	class SceneObject

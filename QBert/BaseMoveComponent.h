@@ -6,17 +6,7 @@
 class BaseMoveComponent : public dae::Component
 {
 public:
-    BaseMoveComponent(int tileIndex)
-        : m_Speed{ 50.0f }
-        , m_IsMoving{ false }
-        , m_StartCubeIndex{ tileIndex }
-        , m_CurrentCubeIndex{ tileIndex }
-        , m_FallingToDeath{ false }
-        , m_Direction{ dae::DirectionSprite::DownLeft }
-        , m_JumpCooldownTimer{ 0 }
-        , m_JumpCooldown{ 0.5f }
-    {};
-
+	BaseMoveComponent(int tileIndex);
     virtual void ActivateJump(const dae::DirectionSprite& dir) = 0;
     virtual void Jump(float deltaT) = 0;
     virtual void FallToDeath(float deltaT) = 0;
@@ -26,6 +16,7 @@ public:
     void SetCurrentCubeIndex(int index) { m_CurrentCubeIndex = index; };
     int GetCurrentCubeIndex()const { return m_CurrentCubeIndex; };
     int GetStartCubeIndex() const { return m_StartCubeIndex; };
+
     //bool GetIsFallingToDeathBehindMap() const { return m_FallingToDeath && !m_FirstHalfOfTheJump && (m_Direction == QBertSprite::UpLeftJump || m_Direction == QBertSprite::UpRightJump); };
 
 protected:

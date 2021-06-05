@@ -21,7 +21,8 @@ public:
 	void Update(float) override;
 	void Render(const dae::Vector2&, const dae::Vector2&) const override;
 	std::shared_ptr<Cube> GetCube(int index) { return m_Cubes[index]; }
-	bool SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const dae::DirectionSprite& dir) const; // Returns false if the player jumps off the map
+	bool SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const dae::DirectionSprite& dir, bool sideWalking = false) const;
+	// Returns false if the player jumps off the map ^
 	bool LevelCompleteCheck() const;
 	void SetLevelFinished(bool value) { m_LevelFinished = value; }
 	const Level& GetCurrentLevel() const { return m_CurrentLevel; };
@@ -30,9 +31,9 @@ private:
 	void LoadMap(dae::Scene& scene);
 	void CreateCube(const size_t& index, const dae::Vector3& pos, dae::Scene& scene);
 
+	int GetRowNumber(const int& currentTileIndex) const;
 	int GetColumnNumber(const int& currentTileIndex) const;
-
-
+	int GetZNumber(const int& currentTileIndex) const;
 
 private:
 	void NextMap();
