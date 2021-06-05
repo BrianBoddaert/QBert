@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioClasses.h" />
+    <ClInclude Include="BaseMoveComponent.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="EnemyManager.h" />
@@ -38,10 +39,12 @@
     <ClInclude Include="ControlComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="ScoreObserver.h" />
+    <ClInclude Include="SidewaysMoveComponent.h" />
     <ClInclude Include="SwitchSceneCommand.h" />
     <ClInclude Include="TxtLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseMoveComponent.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
@@ -67,6 +70,7 @@
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="ScoreObserver.cpp" />
     <ClCompile Include="ServiceLocator.cpp" />
+    <ClCompile Include="SidewaysMoveComponent.cpp" />
     <ClCompile Include="SwitchSceneCommand.cpp" />
     <ClCompile Include="TxtLoader.cpp" />
   </ItemGroup>

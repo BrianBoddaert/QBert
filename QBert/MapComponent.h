@@ -21,7 +21,7 @@ public:
 	void Update(float) override;
 	void Render(const dae::Vector2&, const dae::Vector2&) const override;
 	std::shared_ptr<Cube> GetCube(int index) { return m_Cubes[index]; }
-	bool SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const dae::QBertSprite& dir) const; // Returns false if the player jumps off the map
+	bool SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const dae::DirectionSprite& dir) const; // Returns false if the player jumps off the map
 	bool LevelCompleteCheck() const;
 	void SetLevelFinished(bool value) { m_LevelFinished = value; }
 	const Level& GetCurrentLevel() const { return m_CurrentLevel; };

@@ -4,7 +4,7 @@
 #include "Structs.h"
 namespace dae
 {
-	enum class QBertSprite
+	enum class DirectionSprite
 	{
 		UpRight,
 		UpRightJump,

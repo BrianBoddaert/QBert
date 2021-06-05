@@ -20,9 +20,9 @@ void PathFindingComponent::Update(float)
 
 	if (moveComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
 		return;
-	QBertSprite currentSprite = FindDirectionToClosestPlayer();
+	DirectionSprite currentSprite = FindDirectionToClosestPlayer();
 
-	if (currentSprite == QBertSprite::DownRight)
+	if (currentSprite == DirectionSprite::DownRight)
 		return;
 
 	moveComp->ActivateJump(currentSprite);
@@ -30,26 +30,26 @@ void PathFindingComponent::Update(float)
 
 }
 
-dae::QBertSprite PathFindingComponent::FindDirectionToClosestPlayer() const
+dae::DirectionSprite PathFindingComponent::FindDirectionToClosestPlayer() const
 {
 	std::shared_ptr<GameObject> closestPlayer = FindClosestPlayer();
 
 	if (!closestPlayer)
-		return QBertSprite::DownRight;
+		return DirectionSprite::DownRight;
 
 	const dae::Vector3& currentPos = m_pGameObject->GetComponent<TransformComponent>()->GetPosition();
 	const dae::Vector3& playerPos = closestPlayer->GetComponent<TransformComponent>()->GetPosition();
 
 	if (playerPos.x <= currentPos.x && playerPos.y <= currentPos.y)
-		return QBertSprite::UpLeftJump;
+		return DirectionSprite::UpLeftJump;
 	else if (playerPos.x >= currentPos.x && playerPos.y <= currentPos.y)
-		return QBertSprite::UpRightJump;
+		return DirectionSprite::UpRightJump;
 	else if (playerPos.x <= currentPos.x && playerPos.y >= currentPos.y) 
-		return QBertSprite::DownLeftJump;
+		return DirectionSprite::DownLeftJump;
 	else if (playerPos.x >= currentPos.x && playerPos.y >= currentPos.y) 
-		return QBertSprite::DownRightJump;
+		return DirectionSprite::DownRightJump;
 
-	return QBertSprite::DownRight;
+	return DirectionSprite::DownRight;
 }
 
 const std::shared_ptr<dae::GameObject> PathFindingComponent::FindClosestPlayer() const

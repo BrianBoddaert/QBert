@@ -134,7 +134,7 @@ void MapComponent::CreateCube(const size_t& index, const dae::Vector3& pos, Scen
 
 
 
-bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const QBertSprite& dir) const
+bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const DirectionSprite& dir) const
 // Returns false if the player jumps off the map
 // Alters the currentIndex
 {
@@ -142,7 +142,7 @@ bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const
 
 	switch (dir)
 	{
-	case QBertSprite::DownLeftJump:
+	case DirectionSprite::DownLeftJump:
 	{
 		for (size_t i = 0; i < m_SideLength; i++)
 			if (currentIndex == m_LowestBlocks[i])
@@ -152,7 +152,7 @@ bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const
 
 		break;
 	}
-	case QBertSprite::UpRightJump:
+	case DirectionSprite::UpRightJump:
 	{
 		for (size_t i = 0; i < m_SideLength; i++)
 			if (currentIndex == m_MostRightBlocks[i])
@@ -163,7 +163,7 @@ bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const
 
 		break;
 	}
-	case QBertSprite::UpLeftJump:
+	case DirectionSprite::UpLeftJump:
 	{
 		for (size_t i = 0; i < m_SideLength; i++)
 			if (currentIndex == m_MostLeftBlocks[i])
@@ -173,7 +173,7 @@ bool MapComponent::SetNextCubeIndexAndCheckIfItsOnACube(int& currentIndex, const
 
 		break;
 	}
-	case QBertSprite::DownRightJump:
+	case DirectionSprite::DownRightJump:
 	{
 		for (size_t i = 0; i < m_SideLength; i++)
 			if (currentIndex == m_LowestBlocks[i])

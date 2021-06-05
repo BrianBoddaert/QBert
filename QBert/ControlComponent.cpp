@@ -25,19 +25,19 @@ void ControlComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
 void ControlComponent::Update(float)
 {
 	MoveComponent* moveComp = m_pGameObject->GetComponent<MoveComponent>();
-	QBertSprite currentSprite;
+	DirectionSprite currentSprite;
 
 	if (moveComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
 		return;
 
 	if (m_MoveInputsActive[(int)MoveInputDirections::Down] && m_MoveInputsActive[(int)MoveInputDirections::Left])
-		currentSprite = QBertSprite::DownLeftJump;
+		currentSprite = DirectionSprite::DownLeftJump;
 	else if (m_MoveInputsActive[(int)MoveInputDirections::Up] && m_MoveInputsActive[(int)MoveInputDirections::Left])
-		currentSprite = QBertSprite::UpLeftJump;
+		currentSprite = DirectionSprite::UpLeftJump;
 	else if (m_MoveInputsActive[(int)MoveInputDirections::Down] && m_MoveInputsActive[(int)MoveInputDirections::Right])
-		currentSprite = QBertSprite::DownRightJump;
+		currentSprite = DirectionSprite::DownRightJump;
 	else if (m_MoveInputsActive[(int)MoveInputDirections::Up] && m_MoveInputsActive[(int)MoveInputDirections::Right])
-		currentSprite = QBertSprite::UpRightJump;
+		currentSprite = DirectionSprite::UpRightJump;
 	else
 		return;
 

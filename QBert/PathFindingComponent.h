@@ -8,7 +8,7 @@ class PathFindingComponent :
 public:
     PathFindingComponent();
     void Update(float) override;
-    dae::QBertSprite FindDirectionToClosestPlayer() const;
+    dae::DirectionSprite FindDirectionToClosestPlayer() const;
 private:
     const std::shared_ptr<dae::GameObject> FindClosestPlayer() const;
     float GetDistanceBetween(const dae::Vector3& a, const dae::Vector3& b) const;
