@@ -10,13 +10,19 @@
 
 void CollisionManager::CollisionEffect(std::shared_ptr<dae::GameObject> player, std::shared_ptr<dae::GameObject> collider)
 {
-	if (player->GetComponent<MoveComponent>()->GetIsOnDisc())
+	if (player->GetComponent<MoveComponent>()->GetIsOnDisc() || player->GetComponent<MoveComponent>()->IsFallingToDeath())
 		return;
+
+	auto colliderMoveComp = collider->GetComponent<MoveComponent>();
+	if (colliderMoveComp)
+		if (colliderMoveComp->IsFallingToDeath())
+			return;
 
 	if (collider->HasTag(dae::Tag::Coily) || collider->HasTag(dae::Tag::WrongWay))
 	{
 		player->GetComponent<HealthComponent>()->Die();
-		EnemyManager::GetInstance().Reset();
+
+		//EnemyManager::GetInstance().Reset();
 	}
 	else if (collider->HasTag(dae::Tag::SlickSam))
 	{

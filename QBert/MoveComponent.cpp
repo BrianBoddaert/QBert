@@ -21,7 +21,7 @@ MoveComponent::MoveComponent(int currentCubeIndex)
 
 void MoveComponent::ActivateJump(const DirectionSprite& dir)
 {
-    if (m_IsMoving || InputManager::GetInstance().GetInputLocked())
+     if (m_IsMoving || InputManager::GetInstance().GetInputLocked())
         return;
 
     if (m_pGameObject->HasTag(dae::Tag::Enemy))
@@ -216,9 +216,15 @@ void MoveComponent::FallToDeath(float deltaT)
         auto players = SceneManager::GetInstance().GetCurrentScene()->GetPlayers();
 
         if (m_pGameObject->HasTag(dae::Tag::Coily))
+        {
             for (size_t j = 0; j < players.size(); j++)
                 if (players[j]->GetComponent<ScoreComponent>())
                     players[j]->GetComponent<ScoreComponent>()->IncreaseScore(dae::Event::CoilyHitWithFlyingDisc);
+        }
+        else if (!m_pGameObject->HasTag(dae::Tag::Enemy))
+        {
+            Minigin::GetInstance().SetSkipPlayerDiedDisplayTimer();
+        }
 
 
         m_pGameObject->GetComponent<HealthComponent>()->Die();
@@ -263,7 +269,8 @@ void MoveComponent::JumpOnDisc(float deltaT)
 
     if (m_IsOnDisc)
     {
-        auto highestCubePos = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetHighestCubePos();
+        const auto& CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
+        auto highestCubePos = CurrentMap->GetHighestCubePos();
         auto srcRect = m_pGameObject->GetComponent<RenderComponent>()->GetSrcRect();
         transform->SetPosition(Vector3(highestCubePos.x + srcRect.w/2, highestCubePos.y - srcRect.h/2, highestCubePos.z));
 
@@ -272,6 +279,9 @@ void MoveComponent::JumpOnDisc(float deltaT)
         m_JumpingOnDisc = false;
         m_FallingToDeath = false;
         m_IsMoving = false;
+
+        if (CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true))
+            m_pGameObject->GetComponent<ScoreComponent>()->IncreaseScore(dae::Event::ColorChanged);
     }
     else
     {

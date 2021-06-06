@@ -8,6 +8,14 @@
 
 namespace dae
 {
+	enum class GameState
+	{
+		Playing,
+		Paused,
+		GameOver,
+		PlayerDied
+	};
+
 	class Scene;
 	class SceneManager final : public Singleton<SceneManager>
 	{

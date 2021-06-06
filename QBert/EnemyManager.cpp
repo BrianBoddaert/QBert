@@ -15,7 +15,7 @@ using namespace dae;
 
 EnemyManager::EnemyManager()
 	: m_SpawnTimer{0.0f}
-	, m_SpawnEnemyInterval{3.5f}
+	, m_SpawnEnemyInterval{5.5f}
 	, m_CoilyCount{0}
 	, m_WrongWayCount{0}
 	, m_SlickSamCount{0}
@@ -30,7 +30,6 @@ void EnemyManager::Update(float deltaT)
 	if (m_SpawnTimer >= m_SpawnEnemyInterval)
 	{
 		m_SpawnTimer = 0.0f;
-
 		bool whatToSpawn = std::rand() % 2;
 
 		if (SceneManager::GetInstance().GetCurrentScene()->GetObjectsByTag(dae::Tag::Coily).size() == 0)
@@ -99,24 +98,25 @@ void EnemyManager::SpawnCoily()
 
 	if (scene->GetGameMode() == dae::GameMode::Versus)
 	{
-	auto coily = std::make_shared<GameObject>("Player2");
+		auto coily = std::make_shared<GameObject>("Player2");
 
-	SDL_Rect srcRect = { 0,32,16,32 };
-	const dae::Vector2 srcRectHalf = { 8,16 };
-	coily->AddComponent(new RenderComponent(srcRect));
-	coily->SetTexture("Textures/Qbert2.png");
+		SDL_Rect srcRect = { 0,32,16,32 };
+		const dae::Vector2 srcRectHalf = { 8,16 };
+		coily->AddComponent(new RenderComponent(srcRect));
+		coily->SetTexture("Textures/Qbert2.png");
 
-	const Vector3 pos = { (windowSurface->w / 2 + srcRectHalf.x), (windowSurface->h / 2 - srcRectHalf.y),0 };
+		const Vector3 pos = { (windowSurface->w / 2 + srcRectHalf.x), (windowSurface->h / 2 - srcRectHalf.y),0 };
 
-	coily->AddComponent(new TransformComponent(pos, 1.0f));
+		coily->AddComponent(new TransformComponent(pos, 1.0f));
 
-	coily->AddComponent(new HealthComponent(1));
-	coily->AddComponent(new MoveComponent(0));
-	coily->AddComponent(new ControlComponent(pos));
-	coily->AddTag(dae::Tag::Coily);
-	CollisionManager::GetInstance().AddCollider(coily);
+		coily->AddComponent(new HealthComponent(1));
+		coily->AddComponent(new MoveComponent(0));
+		coily->AddComponent(new ControlComponent(pos));
+		coily->AddTag(dae::Tag::Coily);
+		coily->AddTag(dae::Tag::Enemy);
+		CollisionManager::GetInstance().AddCollider(coily);
 
-	scene->AddPlayer(coily);
+		scene->AddPlayer(coily);
 	}
 	else
 	{
@@ -203,11 +203,17 @@ void EnemyManager::ClearEnemies()
 	auto& collisionManager = CollisionManager::GetInstance();
 	currentScene->RemoveObjectsByTag(dae::Tag::Enemy);
 	collisionManager.RemoveCollidersByTag(dae::Tag::Enemy);
+
+	if (currentScene->GetGameMode() == dae::GameMode::Versus)
+	{
+		currentScene->RemovePlayersByTag(dae::Tag::Coily);
+	}
 }
 
 void EnemyManager::ResetTimer()
 {
 	m_SpawnTimer = 0.0f;
+	m_SpawnEnemyInterval = 3.5f;
 }
 
 

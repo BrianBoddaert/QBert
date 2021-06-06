@@ -309,6 +309,10 @@ void MapComponent::MovePlayerToSpawn(const std::string& name)
 {
 	auto scene = SceneManager::GetInstance().GetCurrentScene();
 	auto player = scene->GetObjectByName(name);
+
+	if (!player)
+		return;
+
 	TransformComponent* transformComp = player->GetComponent<TransformComponent>();
 	MoveComponent* moveComp = player->GetComponent<MoveComponent>();
 	ControlComponent* playerComp = player->GetComponent<ControlComponent>();
@@ -345,9 +349,10 @@ void MapComponent::NextMap()
 			cube->SetActivated(false);
 	}
 	{
+		if (m_CurrentLevel != Level::LevelThree)
 		m_CurrentLevel = Level(int(m_CurrentLevel) + 1);
 		std::string text = "Level: ";
-		text += std::to_string(int(m_CurrentLevel) + 1);
+		text += std::to_string(int(m_CurrentLevel) + 1); // Level 0 is displayed as 1
 		scene->GetObjectByName("LevelDisplay")->GetComponent<dae::TextComponent>()->SetText(text);
 		EnemyManager::GetInstance().Reset();
 	}
@@ -398,7 +403,6 @@ void MapComponent::SpawnDiscs()
 
 	CreateDisc(disc1Pos, *dae::SceneManager::GetInstance().GetCurrentScene());
 	CreateDisc(disc2Pos, *dae::SceneManager::GetInstance().GetCurrentScene());
-
 
 }
 

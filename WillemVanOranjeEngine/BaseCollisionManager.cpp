@@ -70,7 +70,7 @@ void BaseCollisionManager::RemoveCollidersByTag(const dae::Tag& tag)
 {
 	for (size_t i = 0; i < m_pColliders.size(); i++)
 	{
-		if (m_pColliders[i]->HasTag(tag) && m_pColliders[i]->GetName() != "Player2")
+		if (m_pColliders[i]->HasTag(tag))
 			m_pColliders.erase(m_pColliders.begin() + i);
 	}
 }

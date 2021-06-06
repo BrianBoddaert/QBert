@@ -149,8 +149,6 @@ void Minigin::LoadSinglePlayerScene() const
 		scene.AddMap(map);
 	}
 	{
-
-
 		auto player = std::make_shared<GameObject>("Player1");
 		const dae::Vector2 playerHalfSize = { 8,8 };
 		const dae::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
@@ -298,40 +296,12 @@ void Minigin::LoadVersusScene() const
 			CollisionManager::GetInstance().AddCollider(player);
 			scene.AddPlayer(player);
 		}
-		//{
-		//	auto coily = std::make_shared<GameObject>("Player2");
-
-		//	SDL_Rect srcRect = { 0,32,16,32 };
-		//	const dae::Vector2 srcRectHalf = { 8,16 };
-		//	coily->AddComponent(new RenderComponent(srcRect));
-		//	coily->SetTexture("Textures/Qbert2.png");
-
-		//	const Vector3 pos = { (m_WindowSurface->w / 2 + srcRectHalf.x) + 96, (m_WindowSurface->h / 2 - srcRectHalf.y) + 144,6 };
-
-		//	coily->AddComponent(new TransformComponent(pos, 1.0f));
-
-		//	coily->AddComponent(new HealthComponent(3));
-		//	coily->AddComponent(new MoveComponent(6));
-		//	coily->AddComponent(new ControlComponent(pos));
-		//	coily->AddTag(dae::Tag::Coily);
-		//	CollisionManager::GetInstance().AddCollider(coily);
-
-		//	scene.AddPlayer(coily);
-		//}
 	}
 	scene.SortOnZAxis();
 }
 
 void Minigin::LoadHUD(dae::Scene& scene) const
 {
-	{
-		//auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 10);
-		//auto go = std::make_shared<GameObject>("Header");
-		//go->AddComponent(new TransformComponent());
-		//go->AddComponent(new dae::TextComponent("Programming 4 Assignment", font));
-		//go->SetPosition(0, 0,0);
-		//scene.Add(go);
-	}
 	{
 		
 		auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
@@ -442,11 +412,21 @@ void Minigin::LoadHUD(dae::Scene& scene) const
 		gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 100.0f ,m_WindowSurface->h / 2 + 20.0f,10 }, 1.0f));
 
 		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto gameOverText = new dae::TextComponent("Press start or = to restart", font);
+		auto gameOverText = new dae::TextComponent("Press start or P to restart", font);
 
 		gameOverDisplay->AddComponent(gameOverText);
 		gameOverDisplay->SetEnabled(false);
 		scene.Add(gameOverDisplay);
+	}
+	{
+		auto go = std::make_shared<GameObject>("Swearing");
+		go->AddComponent(new TransformComponent({ m_WindowSurface->w / 2.0f ,m_WindowSurface->h / 2.0f ,10 }, 1.0f));
+
+		SDL_Rect srcRect = { 128,83,48,25 };
+		go->AddComponent(new RenderComponent(srcRect));
+		go->SetTexture("Textures/Qbert2.png");
+		go->SetEnabled(false);
+		scene.Add(go);
 	}
 }
 
@@ -501,8 +481,7 @@ void Minigin::Run()
 	bool doContinue = true;
 	auto lastTime = high_resolution_clock::now();
 	float lag = 0.0f;
-	m_Paused = false;
-	m_GameOver = false;
+	m_Gamestate = GameState::Playing;
 	std::thread audioThread(&SoundSystem::Update, &ServiceLocator::GetSoundSystem());
 
 	while (doContinue)
@@ -517,13 +496,16 @@ void Minigin::Run()
 
 		while (lag >= MsPerUpdate)
 		{
-			if (!m_Paused && !m_GameOver)
+			if (m_Gamestate == GameState::Playing)
 			{
 				sceneManager.Update(deltaTime);
 				enemyManager.Update(deltaTime);
 				collisionManager.Update(deltaTime);
 			}
-
+			else if (m_Gamestate == GameState::PlayerDied)
+			{
+				PlayerDiedTimer(deltaTime);
+			}
 			lag -= MsPerUpdate;
 		}
 
@@ -539,6 +521,35 @@ void Minigin::Run()
 	Cleanup();
 }
 
+void Minigin::PlayerDiedTimer(float deltaT)
+{
+	m_PlayerDiedDisplayTimer += deltaT;
+
+	if (m_PlayerDiedDisplayTimer >= m_PlayerDiedDisplayDuration || m_SkipPlayerDiedDisplayTimer)
+	{
+		m_SkipPlayerDiedDisplayTimer = false;
+		m_PlayerDiedDisplayTimer = 0.0f;
+		m_Gamestate = GameState::Playing;
+
+		EnemyManager::GetInstance().Reset();
+
+		auto scene = SceneManager::GetInstance().GetCurrentScene();
+		scene->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player1");
+		scene->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player2");
+
+
+		auto players = scene->GetPlayers();
+		for (size_t i = 0; i < players.size(); i++)
+		{
+			auto moveComp = players[i]->GetComponent<MoveComponent>();
+			moveComp->SetIsMoving(false);
+		}
+		auto swearing = SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("Swearing");
+		swearing->SetEnabled(false);
+		// Turn swear bubble off
+
+	}
+}
 void Minigin::ClearGame()
 {
 	EnemyManager::GetInstance().Reset();
@@ -547,10 +558,46 @@ void Minigin::ClearGame()
 	auto& sceneManager = dae::SceneManager::GetInstance();
 	auto scene = sceneManager.GetCurrentScene();
 	scene->ClearObjects();
-	m_GameOver = false;
-	m_Paused = false;
+	m_Gamestate = GameState::Playing;
 	dae::GameMode gamemode = scene->GetGameMode();
 	sceneManager.RemoveCurrentScene();
 
 	LoadSceneByGameMode(gamemode);
+}
+
+bool Minigin::SetPaused(bool v)
+{
+	if (v)
+	{
+		if (m_Gamestate == dae::GameState::Playing)
+		{
+			m_Gamestate = dae::GameState::Paused;
+			return true;
+		}
+
+	}
+	else
+	{
+		if (m_Gamestate == dae::GameState::Paused)
+		{
+			m_Gamestate = dae::GameState::Playing;
+			return true;
+		}
+
+	}
+
+	return false;
+
+}
+
+bool Minigin::SetPlayerDied()
+{
+	if (m_Gamestate == dae::GameState::Playing)
+	{
+		m_Gamestate = dae::GameState::PlayerDied;
+		return true;
+	}
+
+	return false;
+
 }

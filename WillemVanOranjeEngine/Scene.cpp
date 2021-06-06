@@ -16,14 +16,14 @@ Scene::~Scene() = default;
 
 void Scene::Add(const std::shared_ptr<GameObject>& object)
 {
-	m_Objects.push_back(object);
+	m_pObjects.push_back(object);
 }
 
 void Scene::Update(float deltaT)
 {
-	for (size_t i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
-		m_Objects[i]->Update(deltaT);
+		m_pObjects[i]->Update(deltaT);
 	}
 
 }
@@ -49,7 +49,7 @@ bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<Ga
 
 void Scene::SortOnZAxis()
 {
-	std::sort(m_Objects.begin(), m_Objects.end(), CompareZAxis);
+	std::sort(m_pObjects.begin(), m_pObjects.end(), CompareZAxis);
 }
 
 
@@ -60,7 +60,7 @@ void Scene::Render() const
 	//{
 	//		player->Render();
 	//}
-	for (const auto& object : m_Objects)
+	for (const auto& object : m_pObjects)
 	{
 		object->Render();
 	}
@@ -73,7 +73,7 @@ const std::string& Scene::GetTag() const
 
 std::shared_ptr<GameObject> Scene::GetObjectByName(const std::string& name) const
 {
-	for (const auto& object : m_Objects)
+	for (const auto& object : m_pObjects)
 	{
 		if (object->GetName().compare(name) == 0)
 		return object;
@@ -84,7 +84,7 @@ std::shared_ptr<GameObject> Scene::GetObjectByName(const std::string& name) cons
 void Scene::AddPlayer(const std::shared_ptr<GameObject>& player)
 {
 	m_pPlayers.push_back(player);
-	m_Objects.push_back(player);
+	m_pObjects.push_back(player);
 }
 
 std::shared_ptr<GameObject> Scene::GetPlayer(int index) const
@@ -97,49 +97,58 @@ std::shared_ptr<GameObject> Scene::GetPlayer(int index) const
 
 void Scene::SetCurrentMap(const std::shared_ptr<GameObject>& map)
 {
-	m_CurrentMap = map;
+	m_pCurrentMap = map;
 }
 
 std::shared_ptr<GameObject> Scene::GetCurrentMap() const
 {
-	return m_CurrentMap;
+	return m_pCurrentMap;
 }
 void Scene::RemoveObjectsByTag(const dae::Tag& tag)
 {
-	for (size_t i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
-		if (m_Objects[i]->HasTag(tag) && m_Objects[i]->GetName() != "Player2")
-			m_Objects.erase(m_Objects.begin() + i);
+		if (m_pObjects[i]->HasTag(tag))
+			m_pObjects.erase(m_pObjects.begin() + i);
+	}
+}
+
+void Scene::RemovePlayersByTag(const dae::Tag& tag)
+{
+	for (size_t i = 0; i < m_pPlayers.size(); i++)
+	{
+		if (m_pPlayers[i]->HasTag(tag))
+			m_pPlayers.erase(m_pPlayers.begin() + i);
 	}
 }
 
 void Scene::RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj)
 {
-	for (size_t i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
-		if (m_Objects[i] == obj)
-			m_Objects.erase(m_Objects.begin() + i);
+		if (m_pObjects[i] == obj)
+			m_pObjects.erase(m_pObjects.begin() + i);
 	}
 }
 void Scene::ClearObjects()
 {
-	m_Objects.clear();
+	m_pObjects.clear();
 }
 
 void Scene::RemoveObjectsByName(const std::string& name)
 {
-	for (size_t i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
-		if (m_Objects[i]->GetName() == name)
-			m_Objects.erase(m_Objects.begin() + i);
+		if (m_pObjects[i]->GetName() == name)
+			m_pObjects.erase(m_pObjects.begin() + i);
 	}
 }
 
 void Scene::AddMap(const std::shared_ptr<GameObject>& map)
 {
 	m_pMaps.push_back(map);
-	m_Objects.push_back(map);
-	m_CurrentMap = map;
+	m_pObjects.push_back(map);
+	m_pCurrentMap = map;
 }
 
 std::shared_ptr<GameObject> Scene::GetMap(int index) const
@@ -159,10 +168,10 @@ void Scene::SetGameModeToNext()
 std::vector<std::shared_ptr<GameObject>> Scene::GetObjectsByTag(const dae::Tag& tag) const
 {
 	std::vector<std::shared_ptr<GameObject>> objects;
-	for (size_t i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_pObjects.size(); i++)
 	{
-		if (m_Objects[i]->HasTag(tag))
-			objects.push_back(m_Objects[i]);
+		if (m_pObjects[i]->HasTag(tag))
+			objects.push_back(m_pObjects[i]);
 	}
 
 	return objects;

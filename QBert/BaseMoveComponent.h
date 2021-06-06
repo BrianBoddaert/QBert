@@ -12,6 +12,7 @@ public:
     virtual void FallToDeath(float deltaT) = 0;
     bool IsMoving() const { return m_IsMoving;}
     void SetIsMoving(bool v) { m_IsMoving = v; };
+    bool IsFallingToDeath() const { return m_FallingToDeath; }
     virtual void Update(float deltaT) override = 0;
 
     void SetCurrentCubeIndex(int index) { m_CurrentCubeIndex = index; };

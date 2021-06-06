@@ -11,6 +11,7 @@
 #include "TransformComponent.h"
 #include "MoveComponent.h"
 #include "MapComponent.h"
+#include "Minigin.h"
 
 void dae::LivesObserver::OnNotify(const GameObject* actor, Event event)
 {
@@ -26,26 +27,39 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 	if (actor->HasTag(dae::Tag::Player1))
 	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer1");
-		SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player1");
-		
+		//SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player1");
 	}
-
 
 	if (actor->HasTag(dae::Tag::Player2))
 	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer2");
-		SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player2");
+
+		//SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player2");
 	}
 
-	auto moveComp = actor->GetComponent<MoveComponent>();
-	if (moveComp)
+
+	if (!Minigin::GetInstance().GetSkipPlayerDiedDisplayTimer())
 	{
-		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
+		Vector3 pos = actor->GetComponent<TransformComponent>()->GetPosition();
+		pos.y -= 20;
+		pos.x -= 20;
+		auto swearing = SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("Swearing");
+		swearing->SetEnabled(true);
+		swearing->GetComponent<TransformComponent>()->SetPosition(pos);
 	}
-	else
-	{
-		std::cout << "WARNING: moveComp not found on player after player death" << std::endl;
-	}
+
+
+	Minigin::GetInstance().SetPlayerDied();
+
+	//auto moveComp = actor->GetComponent<MoveComponent>();
+	//if (moveComp)
+	//{
+	//	moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
+	//}
+	//else
+	//{
+	//	std::cout << "WARNING: moveComp not found on player after player death" << std::endl;
+	//}
 
 	if (!livesDisplay) {
 		std::cout << "WARNING: livesDisplay not found after player death" << std::endl;

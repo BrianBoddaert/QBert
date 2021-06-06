@@ -2,6 +2,7 @@
 
 namespace dae
 {
+
 	struct Vector3
 	{
 		Vector3(float X, float Y, float Z)

@@ -16,9 +16,12 @@ void dae::PauseCommand::Execute(const int&)
 	else
 	{
 		bool paused = !Minigin::GetInstance().GetPaused();
-		Minigin::GetInstance().SetPaused(paused);
-		ServiceLocator::GetSoundSystem().TogglePause();
-		SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("PauseDisplay")->SetEnabled(paused);
+		if (Minigin::GetInstance().SetPaused(paused))
+		{
+			ServiceLocator::GetSoundSystem().TogglePause();
+			SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("PauseDisplay")->SetEnabled(paused);
+		}
+
 	}
 
 	

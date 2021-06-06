@@ -13,6 +13,12 @@ namespace dae
 		RenderComponent(const SDL_Rect& src);
 
 		~RenderComponent()override;
+
+		RenderComponent(const RenderComponent&) = delete;
+		RenderComponent& operator=(const RenderComponent&) = delete;
+		RenderComponent(RenderComponent&&) = delete;
+		RenderComponent& operator= (RenderComponent&&) = delete;
+
 		 void Update(float deltaT) override;
 		 void Render(const Vector2& pos, const Vector2& scale) const override;
 		 Texture2D* GetTexture();

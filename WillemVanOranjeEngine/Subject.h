@@ -11,6 +11,11 @@ namespace dae
 		public:
 			Subject();
 			~Subject();
+			Subject(const Subject&) = delete;
+			Subject& operator=(const Subject&) = delete;
+			Subject(Subject&&) = delete;
+			Subject& operator= (Subject&&) = delete;
+
 			void AddObserver(Observer* observer);
 			void RemoveObserver(Observer* observer);
 

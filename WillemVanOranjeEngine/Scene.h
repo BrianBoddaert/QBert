@@ -12,6 +12,7 @@ namespace dae
 		Versus
 	};
 
+
 	class SceneObject;
 	class Scene
 	{
@@ -39,6 +40,7 @@ namespace dae
 		std::shared_ptr<GameObject> GetCurrentMap() const;
 		const std::vector< std::shared_ptr<GameObject>>& GetPlayers() const {return m_pPlayers;}
 		void RemoveObjectsByTag(const dae::Tag& tag);
+		void RemovePlayersByTag(const dae::Tag& tag);
 		void RemoveObjectsByName(const std::string& name);
 		void RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj);
 		void ClearObjects();
@@ -51,10 +53,10 @@ namespace dae
 		const std::string m_Name;
 		std::vector< std::shared_ptr<GameObject>> m_pPlayers{};
 
-		std::vector < std::shared_ptr<GameObject>> m_Objects{};
+		std::vector < std::shared_ptr<GameObject>> m_pObjects{};
 
 		std::vector< std::shared_ptr<GameObject>> m_pMaps{};
-		std::shared_ptr<GameObject> m_CurrentMap;
+		std::shared_ptr<GameObject> m_pCurrentMap;
 	};
 
 }

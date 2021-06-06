@@ -80,16 +80,12 @@ namespace dae
 			{
 				Mix_FreeMusic(m_MusicLibrary.at(x.first));
 			}
-
-			//if (m_MusicLibrary.find(MusicId::Ambient) != m_MusicLibrary.end())
-			//	Mix_FreeMusic(m_MusicLibrary.at(MusicId::Ambient));
-			//if (m_SoundLibrary.find(EffectId::Fart) != m_SoundLibrary.end())
-			//	Mix_FreeChunk(m_SoundLibrary.at(EffectId::Fart));
-			//if (m_SoundLibrary.find(EffectId::Fire) != m_SoundLibrary.end())
-			//	Mix_FreeChunk(m_SoundLibrary.at(EffectId::Fire));
-			//if (m_SoundLibrary.find(EffectId::Jump) != m_SoundLibrary.end())
-			//	Mix_FreeChunk(m_SoundLibrary.at(EffectId::Jump));
 		}
+
+		SdlSoundSystem(const SdlSoundSystem& other) = delete;
+		SdlSoundSystem(SdlSoundSystem&& other) = delete;
+		SdlSoundSystem& operator=(const SdlSoundSystem& other) = delete;
+		SdlSoundSystem& operator=(SdlSoundSystem&& other) = delete;
 
 		void QueueSound(const EffectId& key, float volume = 1.0f) override
 		{
@@ -203,6 +199,10 @@ namespace dae
 	public:
 		NullSoundSystem() = default;
 		~NullSoundSystem() override = default;
+		NullSoundSystem(const NullSoundSystem&) = delete;
+		NullSoundSystem& operator=(const NullSoundSystem&) = delete;
+		NullSoundSystem(NullSoundSystem&&) = delete;
+		NullSoundSystem& operator= (NullSoundSystem&&) = delete;
 		void QueueSound(const EffectId&, float = 1.0f) override {};
 		void QueueSound(const MusicId&, float = 1.0f) override {};
 		void Play(const EffectId&, float = 1.0f) override {};
@@ -261,6 +261,11 @@ namespace dae
 
 		~LoggingSoundSystem() override { delete m_pRealSoundSystem; };
 
+		LoggingSoundSystem(const LoggingSoundSystem&) = delete;
+		LoggingSoundSystem& operator=(const LoggingSoundSystem&) = delete;
+		LoggingSoundSystem(LoggingSoundSystem&&) = delete;
+		LoggingSoundSystem& operator= (LoggingSoundSystem&&) = delete;
+
 		//void ToggleMute() { m_Muted = !m_Muted; };
 		void TogglePause() override
 		{
@@ -285,6 +290,11 @@ namespace dae
 		static void SetSoundSystem(SoundSystem* ss);
 
 		~ServiceLocator() = default;
+
+		ServiceLocator(const ServiceLocator&) = delete;
+		ServiceLocator& operator=(const ServiceLocator&) = delete;
+		ServiceLocator(ServiceLocator&&) = delete;
+		ServiceLocator& operator= (ServiceLocator&&) = delete;
 
 		static void CleanUp();
 

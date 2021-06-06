@@ -18,7 +18,7 @@ private:
 	friend class dae::Singleton<EnemyManager>;
 
 	float m_SpawnTimer;
-	float m_SpawnEnemyInterval;
+	float m_SpawnEnemyInterval;	
 	int m_CoilyCount;
 	int m_WrongWayCount;
 	int m_SlickSamCount;

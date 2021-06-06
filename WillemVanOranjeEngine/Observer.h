@@ -3,7 +3,6 @@
 
 namespace dae
 {
-
 	class Observer
 	{
 	public:

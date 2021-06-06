@@ -25,20 +25,25 @@ void HealthComponent::SetLives(const unsigned int& health)
 void HealthComponent::Die()
 {
 
-
+	auto scene = dae::SceneManager::GetInstance().GetCurrentScene();
 	if ((int)m_Lives <= 0)
 	{
 		m_Dead = true;
 		m_pGameObject->GetComponent<MoveComponent>()->SetIsMoving(false);
-		dae::SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("GameOverDisplay")->SetEnabled(true);
-		dae::SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("PressToRestart")->SetEnabled(true);
+		scene->GetObjectByName("GameOverDisplay")->SetEnabled(true);
+		scene->GetObjectByName("PressToRestart")->SetEnabled(true);
 
 		dae::ServiceLocator::GetSoundSystem().TogglePause();
-		Minigin::GetInstance().SetGameOver(true);
+		Minigin::GetInstance().SetGameState(dae::GameState::GameOver);
 	}
 	else
 	{
 		m_Lives--;
+	}
+
+	if (scene->GetGameMode() == dae::GameMode::Versus && m_pGameObject->HasTag(dae::Tag::Coily))
+	{
+		scene->RemovePlayersByTag(dae::Tag::Coily);
 	}
 
 	if (m_pGameObject->HasTag(dae::Tag::Player))
