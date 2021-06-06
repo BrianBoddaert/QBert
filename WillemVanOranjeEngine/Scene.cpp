@@ -121,6 +121,10 @@ void Scene::RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj)
 			m_Objects.erase(m_Objects.begin() + i);
 	}
 }
+void Scene::ClearObjects()
+{
+	m_Objects.clear();
+}
 
 void Scene::RemoveObjectsByName(const std::string& name)
 {
@@ -138,7 +142,28 @@ void Scene::AddMap(const std::shared_ptr<GameObject>& map)
 	m_CurrentMap = map;
 }
 
-std::shared_ptr<GameObject> Scene::Getmap(int index) const
+std::shared_ptr<GameObject> Scene::GetMap(int index) const
 {
 	return m_pMaps[index];
+}
+
+void Scene::SetGameModeToNext()
+{
+	if (m_GameMode == GameMode::Versus)
+		m_GameMode = GameMode::SinglePlayer;
+	else
+		m_GameMode = GameMode((int)m_GameMode + 1);
+
+}
+
+std::vector<std::shared_ptr<GameObject>> Scene::GetObjectsByTag(const dae::Tag& tag) const
+{
+	std::vector<std::shared_ptr<GameObject>> objects;
+	for (size_t i = 0; i < m_Objects.size(); i++)
+	{
+		if (m_Objects[i]->HasTag(tag))
+			objects.push_back(m_Objects[i]);
+	}
+
+	return objects;
 }

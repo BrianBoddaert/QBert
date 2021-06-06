@@ -24,17 +24,18 @@ namespace dae
 		ButtonRight = XINPUT_GAMEPAD_DPAD_RIGHT,
 		ButtonDown = XINPUT_GAMEPAD_DPAD_DOWN,
 		ButtonLeft = XINPUT_GAMEPAD_DPAD_LEFT,
+		ButtonStart = XINPUT_GAMEPAD_START,
 		TriggerLeft = 10,
 		TriggerRight = 11,
 		LeftThumbStickLeft = 12,
 		LeftThumbStickRight = 13,
 		LeftThumbStickUp = 14,
 		LeftThumbStickDown = 15,
-		RightThumbStickLeft = 16,
-		RightThumbStickRight = 17,
+		RightThumbStickLeft = 17,
+		RightThumbStickRight = 18,
 		RightThumbStickUp = 23,
-		RightThumbStickDown = 19,
-		Count = 18
+		RightThumbStickDown = 20,
+		Count = 19
 		//todo: add the other buttons
 	};
 

@@ -5,6 +5,12 @@
 #include "TransformComponent.h"
 #include "ControlComponent.h"
 #include "EnemyManager.h"
+#include "MoveComponent.h"
+#include "SceneManager.h"
+#include "Scene.h"
+
+#include "Minigin.h"
+#include "AudioClasses.h"
 
 HealthComponent::HealthComponent(const unsigned int& health)
 	:m_Lives{ health }
@@ -18,15 +24,28 @@ void HealthComponent::SetLives(const unsigned int& health)
 
 void HealthComponent::Die()
 {
-	m_Dead = true;
+
 
 	if ((int)m_Lives <= 0)
-		return;
+	{
+		m_Dead = true;
+		m_pGameObject->GetComponent<MoveComponent>()->SetIsMoving(false);
+		dae::SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("GameOverDisplay")->SetEnabled(true);
+		dae::SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("PressToRestart")->SetEnabled(true);
 
-	m_Lives--;
+		dae::ServiceLocator::GetSoundSystem().TogglePause();
+		Minigin::GetInstance().SetGameOver(true);
+	}
+	else
+	{
+		m_Lives--;
+	}
 
 	if (m_pGameObject->HasTag(dae::Tag::Player))
+	{
+		m_pGameObject->GetComponent<MoveComponent>()->SetIsMoving(false);
 		m_pGameObject->Notify(dae::Event::ActorDied);
+	}
 	else
 	{
 		EnemyManager::GetInstance().RemoveEnemyByName(m_pGameObject->GetName());

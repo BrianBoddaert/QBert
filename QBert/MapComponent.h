@@ -29,7 +29,7 @@ public:
 	void MovePlayerToSpawn(const std::string& name);
 	bool DoesCubeHaveDiscNextToIt(int cubeIndex) const;
 	std::shared_ptr<Disc> GetDiscByGameObject(const std::shared_ptr<dae::GameObject>& go) const;
-
+	const dae::Vector3& GetHighestCubePos() const { return m_HighestCubePos; }
 private:
 	void Initialize(dae::Scene& scene);
 	void LoadMap(dae::Scene& scene);

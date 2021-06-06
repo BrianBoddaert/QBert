@@ -3,7 +3,7 @@
 dae::InputManager::InputManager()
     :m_ControllerButtons{ ControllerButton::ButtonA,ControllerButton::ButtonB, ControllerButton::ButtonX, ControllerButton::ButtonY,ControllerButton::ButtonUp,ControllerButton::ButtonRight, ControllerButton::ButtonDown, ControllerButton::ButtonLeft,
    ControllerButton::TriggerLeft,ControllerButton::TriggerRight, ControllerButton::LeftThumbStickLeft, ControllerButton::LeftThumbStickRight, ControllerButton::LeftThumbStickUp, ControllerButton::LeftThumbStickDown,
-    ControllerButton::RightThumbStickLeft,ControllerButton::RightThumbStickRight, ControllerButton::RightThumbStickUp, ControllerButton::RightThumbStickDown }
+    ControllerButton::RightThumbStickLeft,ControllerButton::RightThumbStickRight, ControllerButton::RightThumbStickUp, ControllerButton::RightThumbStickDown,ControllerButton::ButtonStart }
 {
     for (size_t i = 0; i < XUSER_MAX_COUNT; i++)
     {

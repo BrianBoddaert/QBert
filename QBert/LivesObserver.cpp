@@ -67,20 +67,4 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 	textComp->SetText("Remaining lives: " + std::to_string(healthComp->GetLives()));
 
 
-	auto playerDiedPopup = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("PlayerDiedPopup");
-
-	if (!playerDiedPopup) {
-		std::cout << "WARNING: playerDiedPopup not found after player death" << std::endl;
-		return;
-	}
-
-	auto timerComponent = std::static_pointer_cast<GameObject>(playerDiedPopup).get()->GetComponent<TimerComponent>();
-
-	if (!timerComponent) {
-		std::cout << "WARNING: timerComponent of playerDiedPopup not found after player death" << std::endl;
-		return;
-	}
-
-	timerComponent->SetTimerEnabled(3.0f);
-
 }

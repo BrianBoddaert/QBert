@@ -8,6 +8,10 @@
 #include "MapComponent.h"
 #include "HealthComponent.h"
 #include "AudioClasses.h"
+#include "InputManager.h"
+#include "ScoreComponent.h"
+#include "Minigin.h"
+
 using namespace dae;
 
 
@@ -17,18 +21,25 @@ MoveComponent::MoveComponent(int currentCubeIndex)
 
 void MoveComponent::ActivateJump(const DirectionSprite& dir)
 {
-    if (m_IsMoving)
+    if (m_IsMoving || InputManager::GetInstance().GetInputLocked())
         return;
 
-
-    if (m_pGameObject->HasTag(dae::Tag::Coily))
+    if (m_pGameObject->HasTag(dae::Tag::Enemy))
+    {
+        if (m_JumpCooldownTimer >= m_JumpCooldown * m_EnemyJumpCooldownMultiplier)
+            m_JumpCooldownTimer = 0.0f;
+        else
+            return;
+    }
+    else
     {
         if (m_JumpCooldownTimer >= m_JumpCooldown)
             m_JumpCooldownTimer = 0.0f;
         else
             return;
-
     }
+
+
 
     ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 0.1f);
 
@@ -49,7 +60,7 @@ void MoveComponent::ActivateJump(const DirectionSprite& dir)
     if ((int)m_Direction >= (int)DirectionSprite::DownRight)
         m_JumpHeight = m_MoveDistance.y / 2.0f;
     else
-        m_JumpHeight = m_MoveDistance.y * 1.5f; // Increase jumpheight if it has to jump upwards
+        m_JumpHeight = m_MoveDistance.y * m_JumpHeightUpMultiplier; // Increase jumpheight if it has to jump upwards
 
     MapComponent* CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
     
@@ -69,9 +80,6 @@ void MoveComponent::ActivateJump(const DirectionSprite& dir)
         }
 
     }
-
-
-
 
 }
 
@@ -133,9 +141,16 @@ void MoveComponent::Jump(float deltaT)
         renderComp->SetSrcRect(SDL_Rect{ nonJumpingSprite * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
 
         if (m_pGameObject->HasTag(dae::Tag::Player))
-        CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true);
-        if (m_pGameObject->HasTag(dae::Tag::SlickSam))
+        {
+            if (CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true))
+                m_pGameObject->GetComponent<ScoreComponent>()->IncreaseScore(dae::Event::ColorChanged);
+        }
+
+        else if (m_pGameObject->HasTag(dae::Tag::SlickSam))
+        {
             CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(false);
+        }
+
         m_IsMoving = false;
     }
     else
@@ -198,6 +213,14 @@ void MoveComponent::FallToDeath(float deltaT)
         const auto& spritePixelSize = renderComp->GetSpritePixelSize();
         renderComp->SetSrcRect(SDL_Rect{ NonJumpingSprite * (int)spritePixelSize.x,currentSrcRect.y,(int)spritePixelSize.x,(int)spritePixelSize.y });
 
+        auto players = SceneManager::GetInstance().GetCurrentScene()->GetPlayers();
+
+        if (m_pGameObject->HasTag(dae::Tag::Coily))
+            for (size_t j = 0; j < players.size(); j++)
+                if (players[j]->GetComponent<ScoreComponent>())
+                    players[j]->GetComponent<ScoreComponent>()->IncreaseScore(dae::Event::CoilyHitWithFlyingDisc);
+
+
         m_pGameObject->GetComponent<HealthComponent>()->Die();
         m_IsMoving = false;
         m_FallingToDeath = false;
@@ -211,77 +234,74 @@ void MoveComponent::FallToDeath(float deltaT)
 
 void MoveComponent::Update(float deltaT)
 {
-
     if (m_FallingToDeath)
         FallToDeath(deltaT);
     else if (m_JumpingOnDisc)
         JumpOnDisc(deltaT);
     else if (m_IsMoving)
         Jump(deltaT);
-    else if (m_pGameObject->HasTag(dae::Tag::Coily))
+    else
         m_JumpCooldownTimer += deltaT;
 }
 
 
-void MoveComponent::JumpOnDisc(float deltaT)
+void MoveComponent::JumpOnDisc(float deltaT) 
 {
     const auto& transform = m_pGameObject->GetComponent<TransformComponent>();
 
-    if (!m_pDiscTransform)
+    if (m_pDiscGameObject)
     {
-        if (m_IsOnDisc)
-        {
-            dae::SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn(m_pGameObject->GetName());
-            m_CurrentCubeIndex = 0;
-            m_IsOnDisc = false;
-            m_JumpingOnDisc = false;
-            m_FallingToDeath = false;
-            m_IsMoving = false;
-        }
-        else
-        {
+        Vector2 liftSpeed = { 1,13 };
+        m_IsOnDisc = true;
+        Vector3 newPos = m_pDiscGameObject->GetComponent<TransformComponent>()->GetPosition();
+        newPos.x += GAMESCALE * liftSpeed.x;
+        newPos.y -= GAMESCALE * liftSpeed.y;
+        transform->SetPosition(newPos);
 
-            Vector3 pos = transform->GetPosition();
+        return;
+    }
 
-            const float moveDistRatio = (m_MoveDistance.y / m_MoveDistance.x);
+    if (m_IsOnDisc)
+    {
+        auto highestCubePos = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetHighestCubePos();
+        auto srcRect = m_pGameObject->GetComponent<RenderComponent>()->GetSrcRect();
+        transform->SetPosition(Vector3(highestCubePos.x + srcRect.w/2, highestCubePos.y - srcRect.h/2, highestCubePos.z));
 
-            float jumpHeight = m_MoveDistance.y / 2.0f;
-
-            const Vector2 speed = { m_Speed,m_Speed * moveDistRatio * (m_MoveDistance.y / jumpHeight) };
-
-            if (m_Direction == dae::DirectionSprite::DownRightJump || m_Direction == dae::DirectionSprite::UpRightJump)
-                pos.x += deltaT * speed.x;
-            else
-                pos.x -= deltaT * speed.x;
-
-            jumpHeight = m_MoveDistance.y * 1.5f;
-
-            if (m_FirstHalfOfTheJump)
-            {
-                pos.y -= deltaT * speed.y;
-
-                if (abs(pos.y - m_JumpStartPos.y) > jumpHeight)
-                    m_FirstHalfOfTheJump = false;
-            }
-            else pos.y += deltaT * speed.y;
-
-            if (pos.y > 720)
-            {
-                m_IsMoving = false;
-                m_FallingToDeath = false;
-            }
-            else transform->SetPosition(Vector3(pos.x, pos.y, 0));
-        }
-
+        m_CurrentCubeIndex = 0;
+        m_IsOnDisc = false;
+        m_JumpingOnDisc = false;
+        m_FallingToDeath = false;
+        m_IsMoving = false;
     }
     else
     {
-        m_IsOnDisc = true;
-        Vector3 newPos = m_pDiscTransform->GetPosition();
-        newPos.x += GAMESCALE * 1.f;
-        newPos.y -= GAMESCALE * 13.f;
-        transform->SetPosition(newPos);
+
+        Vector3 pos = transform->GetPosition();
+        const float moveDistRatio = (m_MoveDistance.y / m_MoveDistance.x);
+        float jumpHeight = m_MoveDistance.y / 2.0f;
+        const Vector2 speed = { m_Speed,m_Speed * moveDistRatio * (m_MoveDistance.y / jumpHeight) };
+
+        if (m_Direction == dae::DirectionSprite::DownRightJump || m_Direction == dae::DirectionSprite::UpRightJump)
+            pos.x += deltaT * speed.x;
+        else
+            pos.x -= deltaT * speed.x;
+
+        jumpHeight = m_MoveDistance.y * m_JumpHeightUpMultiplier;
+
+        if (m_FirstHalfOfTheJump)
+        {
+            pos.y -= deltaT * speed.y;
+
+            if (abs(pos.y - m_JumpStartPos.y) > jumpHeight)
+                m_FirstHalfOfTheJump = false;
+        }
+        else
+            pos.y += deltaT * speed.y;
+
+        transform->SetPosition(Vector3(pos.x, pos.y, 0));
     }
+
+
 
 
 }

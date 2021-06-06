@@ -15,6 +15,7 @@ namespace dae
 		void RemoveColliderByObject(const std::shared_ptr<GameObject>& obj);
 		void RemoveCollidersByTag(const dae::Tag& tag);
 		void RemoveCollidersByName(const std::string& name);
+		void ClearColliders();
 	protected:
 
 		bool IsColliding(std::shared_ptr<GameObject> obj1, std::shared_ptr<GameObject> obj2);

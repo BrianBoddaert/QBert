@@ -20,6 +20,16 @@ dae::Scene& dae::SceneManager::CreateScene(const std::string& name,const int gam
 	return *m_pCurrentScene;
 }
 
+void dae::SceneManager::RemoveCurrentScene()
+{
+	for (size_t i = 0; i < m_pScenes.size(); i++)
+	{
+		if (m_pScenes[i] == m_pCurrentScene)
+		m_pScenes.erase(m_pScenes.begin() + i);
+	}
+
+}
+
 std::shared_ptr<dae::Scene> dae::SceneManager::GetSceneByName(const std::string& n) const
 {
 	for (const auto& scene : m_pScenes)
@@ -40,23 +50,26 @@ void dae::SceneManager::SetCurrentScene(const std::shared_ptr<Scene>& scene)
 	m_pCurrentScene = scene;
 }
 
-void dae::SceneManager::SetCurrentSceneToNext()
-{
-	int currentIndex = 0;
-	for (int i = 0; i < m_pScenes.size(); i++)
-	{
-		if (m_pScenes[i] == m_pCurrentScene)
-		{
-			currentIndex = i;
-			break;
-		}
-	}
-
-	if (currentIndex >= m_pScenes.size() - 1) // minus 1 because it's size to index
-		currentIndex = 0;
-	else
-		currentIndex++;
-
-	m_pCurrentScene = m_pScenes[currentIndex];
-
-}
+//void dae::SceneManager::SetCurrentSceneToNext()
+//{
+//	int currentIndex = 0;
+//	for (int i = 0; i < m_pScenes.size(); i++)
+//	{
+//		if (m_pScenes[i] == m_pCurrentScene)
+//		{
+//			currentIndex = i;
+//			break;
+//		}
+//	}
+//
+//	if (currentIndex >= m_pScenes.size() - 1) // minus 1 because it's size to index
+//		currentIndex = 0;
+//	else
+//		currentIndex++;
+//
+//	{
+//		m_pCurrentScene = m_pScenes[currentIndex];
+//	}
+//
+//
+//}

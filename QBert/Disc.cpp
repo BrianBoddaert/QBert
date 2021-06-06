@@ -12,7 +12,6 @@ using namespace dae;
 Disc::Disc(const Vector3& finalPos,const Vector2& srcRect)
 	:m_FinalPos{ finalPos }
 {
-
 	m_pGameObject = std::make_shared<GameObject>(("Disc"));
 	m_FinalPos.y -= srcRect.y;
 	m_FinalPos.x += srcRect.x/2; 
@@ -56,7 +55,7 @@ void Disc::Elevate(float deltaT)
 
 		m_Direction.x = dist.x / length;
 		m_Direction.y = dist.y / length;
-		ServiceLocator::GetSoundSystem().QueueSound(EffectId::Lift, 0.8f);
+		ServiceLocator::GetSoundSystem().QueueSound(EffectId::Lift, 0.3f);
 	}
 
 	else if (m_Moving)
@@ -71,13 +70,18 @@ void Disc::Elevate(float deltaT)
 			m_pTransformComponent->SetPosition(newPos);
 
 		}
-		else
+		else // Reached the top
 		{
 			m_pTransformComponent->SetPosition(Vector3{ m_FinalPos.x, m_FinalPos.y, 0 });
+			auto players = dae::SceneManager::GetInstance().GetCurrentScene()->GetPlayers();
+			for (size_t i = 0; i < players.size(); i++)
+			{
+				auto moveComp = players[i]->GetComponent<MoveComponent>();
+				if (moveComp->GetDiscGameObject() == m_pGameObject)
+					moveComp->SetDiscGameObject(nullptr);
+			}
 			m_Moving = false;
 			m_MarkedForDelete = true;
-			dae::SceneManager::GetInstance().GetCurrentScene()->GetPlayer(0)->GetComponent<MoveComponent>()->SetDiscTransform(nullptr);
-
 		}
 	}
 }

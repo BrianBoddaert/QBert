@@ -10,7 +10,9 @@
 #include "InputManager.h"
 #include "TxtLoader.h"
 #include "CollisionManager.h"
-
+#include "EnemyManager.h"
+#include "TextComponent.h"
+#include "ScoreComponent.h"
 //Static variables Init
 
 using namespace dae;
@@ -320,7 +322,6 @@ void MapComponent::MovePlayerToSpawn(const std::string& name)
 
 void MapComponent::NextMap()
 {
-
 	InputManager::GetInstance().LockInput(false);
 	m_LevelFinished = false;
 	m_LevelFinishedColorChangeCount = 0;
@@ -343,7 +344,14 @@ void MapComponent::NextMap()
 		if (cube)
 			cube->SetActivated(false);
 	}
-	m_CurrentLevel = Level(int(m_CurrentLevel) + 1);
+	{
+		m_CurrentLevel = Level(int(m_CurrentLevel) + 1);
+		std::string text = "Level: ";
+		text += std::to_string(int(m_CurrentLevel) + 1);
+		scene->GetObjectByName("LevelDisplay")->GetComponent<dae::TextComponent>()->SetText(text);
+		EnemyManager::GetInstance().Reset();
+	}
+
 }
 
 void MapComponent::Render(const dae::Vector2&, const dae::Vector2&) const
@@ -364,6 +372,11 @@ void MapComponent::SpawnDiscs()
 	}
 	for (size_t i = 0; i < m_Discs.size(); i++)
 	{
+		auto players = SceneManager::GetInstance().GetCurrentScene()->GetPlayers();
+		for (size_t j = 0; j < players.size(); j++)
+		{
+			players[j]->GetComponent<ScoreComponent>()->IncreaseScore(dae::Event::DiscLeftAtEndOfTheStage);
+		}
 		m_Discs[i]->SetMarkedForDelete(true);
 	}
 

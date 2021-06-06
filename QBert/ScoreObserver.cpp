@@ -10,10 +10,10 @@
 void dae::ScoreObserver::OnNotify(const GameObject* actor, Event event)
 {
 	if (event == Event::CatchSlickOrSam || event == Event::CoilyHitWithFlyingDisc || event == Event::ColorChanged || event == Event::DiscLeftAtEndOfTheStage || event == Event::ScoreSet)
-		Unlock(actor);
+		Unlock(actor, event);
 }
 
-void dae::ScoreObserver::Unlock(const GameObject* actor)
+void dae::ScoreObserver::Unlock(const GameObject* actor,const Event&)
 {
 
 	std::shared_ptr<SceneObject> pointsDisplay = nullptr;
@@ -41,6 +41,8 @@ void dae::ScoreObserver::Unlock(const GameObject* actor)
 		std::cout << "WARNING: ScoreComp not found after player death" << std::endl;
 		return;
 	}
+
+	//scoreComp->SetScore(scoreComp->GetScore() + int(event));
 	textComp->SetText("Score: " + std::to_string(scoreComp->GetScore()));
 
 

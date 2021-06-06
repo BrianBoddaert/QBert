@@ -39,7 +39,8 @@ void dae::GameObject::Update(float deltaT)
 
 void dae::GameObject::Render() const
 {
-	if (!m_Enabled) return;
+	if (!m_Enabled)
+		return;
 	TransformComponent* transform = GetComponent<TransformComponent>();
 
 	Vector3 pos;

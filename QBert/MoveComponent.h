@@ -14,14 +14,14 @@ public:
     void Update(float deltaT) override;
 
     void JumpOnDisc(float deltaT);
+    bool GetIsOnDisc() const { return m_IsOnDisc; }
+    std::shared_ptr<dae::GameObject> GetDiscGameObject() { return m_pDiscGameObject; }
 
-    dae::TransformComponent* GetDiscTransform() { return m_pDiscTransform; }
-
-    void SetDiscTransform(dae::TransformComponent* discTC) { m_pDiscTransform = discTC; }
+    void SetDiscGameObject(std::shared_ptr<dae::GameObject> disc) { m_pDiscGameObject = disc; }
     bool GetJumpingOnDisc() const { return m_JumpingOnDisc; }
 private:
     void CorrectPosition() override;
-    dae::TransformComponent* m_pDiscTransform;
+    std::shared_ptr<dae::GameObject> m_pDiscGameObject;
     bool m_JumpingOnDisc;
     bool m_IsOnDisc;
 

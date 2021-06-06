@@ -13,6 +13,7 @@ namespace dae
 
 		void SetText(const std::string& text);
 
+		void UpdateTexture();
 		explicit TextComponent(const std::string& text, Font* font, float wrap = 1.0f);
 		virtual ~TextComponent() override = default;
 		TextComponent(const TextComponent& other) = delete;

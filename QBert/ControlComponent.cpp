@@ -24,7 +24,10 @@ void ControlComponent::SetMoveInput(const MoveInputDirections& dir, bool on)
 
 void ControlComponent::Update(float)
 {
+	if (!m_pGameObject)
+		return;
 	MoveComponent* moveComp = m_pGameObject->GetComponent<MoveComponent>();
+
 	DirectionSprite currentSprite;
 
 	if (moveComp->IsMoving() || InputManager::GetInstance().GetInputLocked())

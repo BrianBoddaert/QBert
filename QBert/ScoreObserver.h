@@ -10,7 +10,7 @@ namespace dae {
         void OnNotify(const dae::GameObject* actor, Event event) override;
 
     private:
-        void Unlock(const GameObject* actor);
+        void Unlock(const GameObject* actor, const Event& event);
     };
 
 }

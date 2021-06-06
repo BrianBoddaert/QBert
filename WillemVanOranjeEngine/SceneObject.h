@@ -11,7 +11,8 @@ namespace dae
 		Coily,
 		WrongWay,
 		Disc,
-		SlickSam
+		SlickSam,
+		Enemy
 	};
 
 	class SceneObject

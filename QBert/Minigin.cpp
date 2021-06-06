@@ -108,7 +108,6 @@ void Minigin::AssignKeys()
 
 	for (int i = 0; i < XUSER_MAX_COUNT; i++)
 	{
-		input.AssignControllerKey<PauseCommand>(ControllerButton::TriggerLeft, i);
 		//input.AssignControllerKey<DieCommand>(ControllerButton::LeftThumbStickUp, i);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickUp, i, (int)MoveInputDirections::Up);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::LeftThumbStickLeft, i, (int)MoveInputDirections::Left);
@@ -119,6 +118,9 @@ void Minigin::AssignKeys()
 		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonLeft, i, (int)MoveInputDirections::Left);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonRight, i, (int)MoveInputDirections::Right);
 		input.AssignControllerKey<MoveCommand>(ControllerButton::ButtonDown, i, (int)MoveInputDirections::Down);
+
+		input.AssignControllerKey<PauseCommand>(ControllerButton::ButtonStart, i);
+		input.AssignControllerKey<SwitchSceneCommand>(ControllerButton::TriggerRight, i);
 	}
 
 	input.AssignKeyboardKey<PauseCommand>(KeyboardButton::P);
@@ -135,40 +137,9 @@ void Minigin::LoadSinglePlayerScene() const
 {
 
 
-	auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
+		auto& scene = SceneManager::GetInstance().CreateScene("SinglePlayerScene", (int)GameMode::SinglePlayer);
+	LoadHUD(scene);
 
-	{
-		auto go = std::make_shared<GameObject>("Background");
-		//go->AddComponent(new RenderComponent());
-
-		go->AddComponent(new TransformComponent());
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
-		auto textComp = new dae::TextComponent("FPS", font);
-		go->AddComponent(textComp);
-		go->AddComponent(new FPSComponent(textComp));
-		scene.Add(go);
-	}
-	{
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
-		auto go = std::make_shared<GameObject>("HowToPlay");
-		go->AddComponent(new TransformComponent());
-		go->AddComponent(new dae::TextComponent("How to play: LeftThumbUp to die, RightThumbUp to earn 25 points, controller1 does this for player1, controller2 for player2, A,B,X and Y to fire, duck, fart and jump ", font, .4f));
-		go->SetPosition(50, 150,10);
-		scene.Add(go);
-	}
-	//go = std::make_shared<GameObject>("Logo");
-	//go->AddComponent(new TransformComponent());
-	//go->AddComponent(new RenderComponent());
-	//go->SetTexture("logo.png");
-	//go->SetPosition(216, 180);
-	//scene.Add(go);
-
-	//font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	//go = std::make_shared<GameObject>("Header");
-	//go->AddComponent(new TransformComponent());
-	//go->AddComponent(new dae::TextComponent("Programming 4 Assignment", font));
-	//go->SetPosition(80, 20);
-	//scene.Add(go);
 	{
 		auto map = std::make_shared<GameObject>("Map");
 		//250,200
@@ -178,24 +149,7 @@ void Minigin::LoadSinglePlayerScene() const
 		scene.AddMap(map);
 	}
 	{
-		auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
-		scoreDisplay->AddComponent(new TransformComponent({ 200,0,10 }, 1.0f));
 
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto scoreCounter = new dae::TextComponent("Score: 0", font);
-		scoreDisplay->AddComponent(scoreCounter);
-
-		scene.Add(scoreDisplay);
-
-		auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
-		livesDisplay->AddComponent(new TransformComponent());
-		livesDisplay->SetPosition(400, 0,10);
-
-		font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
-		livesDisplay->AddComponent(livesCounter);
-
-		scene.Add(livesDisplay);
 
 		auto player = std::make_shared<GameObject>("Player1");
 		const dae::Vector2 playerHalfSize = { 8,8 };
@@ -223,19 +177,8 @@ void Minigin::LoadSinglePlayerScene() const
 		CollisionManager::GetInstance().AddCollider(player);
 		scene.AddPlayer(player);
 	}
-	{
-		auto playerDiedPopup = std::make_shared<GameObject>("PlayerDiedPopup");
-		playerDiedPopup->AddComponent(new TransformComponent());
-		playerDiedPopup->AddComponent(new TimerComponent());
-		playerDiedPopup->SetEnabled(false);
-		playerDiedPopup->SetPosition(400, 400,10);
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto textComp = new dae::TextComponent("Player died", font);
-		playerDiedPopup->AddComponent(textComp);
 
-		scene.Add(playerDiedPopup);
-	}
-
+	scene.SortOnZAxis();
 }
 
 void Minigin::LoadCoOpScene() const
@@ -243,7 +186,7 @@ void Minigin::LoadCoOpScene() const
 
 	auto& scene = SceneManager::GetInstance().CreateScene("CoOpScene", (int)GameMode::CoOp);
 
-	
+	LoadHUD(scene);
 	auto map = std::make_shared<GameObject>("Map");
 	//250,200
 	const dae::Vector3 highestCubePos = { (float)m_WindowSurface->w / 2,  (float)m_WindowSurface->h / 2,0 };
@@ -253,46 +196,6 @@ void Minigin::LoadCoOpScene() const
 	scene.AddMap(map);
 	
 	{
-		{
-			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
-			scoreDisplay->AddComponent(new TransformComponent({ 200,0,10 }, 1.0f));
-
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new dae::TextComponent("Score: 0", font);
-			scoreDisplay->AddComponent(scoreCounter);
-
-			scene.Add(scoreDisplay);
-
-			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
-			livesDisplay->AddComponent(new TransformComponent());
-			livesDisplay->SetPosition(400, 0,10);
-
-			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
-			livesDisplay->AddComponent(livesCounter);
-
-			scene.Add(livesDisplay);
-		}
-		{
-			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
-			scoreDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 200.0f,0.0f,10 }, 1.0f));
-
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new dae::TextComponent("Score: 0", font);
-			scoreDisplay->AddComponent(scoreCounter);
-
-			scene.Add(scoreDisplay);
-
-			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
-			livesDisplay->AddComponent(new TransformComponent());
-			livesDisplay->SetPosition(m_WindowSurface->w - 400.0f, 0,10);
-
-			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
-			livesDisplay->AddComponent(livesCounter);
-
-			scene.Add(livesDisplay);
-		}
 
 		{
 			auto player = std::make_shared<GameObject>("Player1");
@@ -308,7 +211,6 @@ void Minigin::LoadCoOpScene() const
 			player->AddComponent(new RenderComponent(playerSrcRect));
 			player->SetTexture("Textures/Qbert2.png");
 			//const dae::Vector2& cubeOffset =  mapComp->GetCubeOffset();
-
 
 			player->AddComponent(new TransformComponent(playerPos, 1.0f));
 
@@ -350,25 +252,14 @@ void Minigin::LoadCoOpScene() const
 			scene.AddPlayer(player);
 		}
 	}
-	{
-		auto playerDiedPopup = std::make_shared<GameObject>("PlayerDiedPopup");
-		playerDiedPopup->AddComponent(new TransformComponent());
-		playerDiedPopup->AddComponent(new TimerComponent());
-		playerDiedPopup->SetEnabled(false);
-		playerDiedPopup->SetPosition(400, 400,10);
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto textComp = new dae::TextComponent("Player died", font);
-		playerDiedPopup->AddComponent(textComp);
-
-		scene.Add(playerDiedPopup);
-	}
+	scene.SortOnZAxis();
 }
 
 void Minigin::LoadVersusScene() const
 {
 
 	auto& scene = SceneManager::GetInstance().CreateScene("VersusScene", (int)GameMode::Versus);
-
+	LoadHUD(scene);
 	auto map = std::make_shared<GameObject>("Map");
 	//250,200
 	const dae::Vector3 highestCubePos = { (float)m_WindowSurface->w / 2,  (float)m_WindowSurface->h / 2,0 };
@@ -378,46 +269,6 @@ void Minigin::LoadVersusScene() const
 	scene.AddMap(map);
 
 	{
-		{
-			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
-			scoreDisplay->AddComponent(new TransformComponent({ 200,0,10 }, 1.0f));
-
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new dae::TextComponent("Score: 0", font);
-			scoreDisplay->AddComponent(scoreCounter);
-
-			scene.Add(scoreDisplay);
-
-			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
-			livesDisplay->AddComponent(new TransformComponent());
-			livesDisplay->SetPosition(400, 0, 10);
-
-			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
-			livesDisplay->AddComponent(livesCounter);
-
-			scene.Add(livesDisplay);
-		}
-		{
-			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
-			scoreDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 200.0f,0.0f,10 }, 1.0f));
-
-			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto scoreCounter = new dae::TextComponent("Score: 0", font);
-			scoreDisplay->AddComponent(scoreCounter);
-
-			scene.Add(scoreDisplay);
-
-			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
-			livesDisplay->AddComponent(new TransformComponent());
-			livesDisplay->SetPosition(m_WindowSurface->w - 400.0f, 0, 10);
-
-			font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
-			livesDisplay->AddComponent(livesCounter);
-
-			scene.Add(livesDisplay);
-		}
 
 		{
 			auto player = std::make_shared<GameObject>("Player1");
@@ -447,41 +298,167 @@ void Minigin::LoadVersusScene() const
 			CollisionManager::GetInstance().AddCollider(player);
 			scene.AddPlayer(player);
 		}
+		//{
+		//	auto coily = std::make_shared<GameObject>("Player2");
+
+		//	SDL_Rect srcRect = { 0,32,16,32 };
+		//	const dae::Vector2 srcRectHalf = { 8,16 };
+		//	coily->AddComponent(new RenderComponent(srcRect));
+		//	coily->SetTexture("Textures/Qbert2.png");
+
+		//	const Vector3 pos = { (m_WindowSurface->w / 2 + srcRectHalf.x) + 96, (m_WindowSurface->h / 2 - srcRectHalf.y) + 144,6 };
+
+		//	coily->AddComponent(new TransformComponent(pos, 1.0f));
+
+		//	coily->AddComponent(new HealthComponent(3));
+		//	coily->AddComponent(new MoveComponent(6));
+		//	coily->AddComponent(new ControlComponent(pos));
+		//	coily->AddTag(dae::Tag::Coily);
+		//	CollisionManager::GetInstance().AddCollider(coily);
+
+		//	scene.AddPlayer(coily);
+		//}
+	}
+	scene.SortOnZAxis();
+}
+
+void Minigin::LoadHUD(dae::Scene& scene) const
+{
+	{
+		//auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 10);
+		//auto go = std::make_shared<GameObject>("Header");
+		//go->AddComponent(new TransformComponent());
+		//go->AddComponent(new dae::TextComponent("Programming 4 Assignment", font));
+		//go->SetPosition(0, 0,0);
+		//scene.Add(go);
+	}
+	{
+		
+		auto player1HUD = std::make_shared<GameObject>("HUDPlayer1");
+		player1HUD->AddComponent(new TransformComponent({ 20,50.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		player1HUD->AddComponent(new dae::TextComponent("Player1", font));
+
+		scene.Add(player1HUD);
+	}
+	{
+		auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer1");
+		scoreDisplay->AddComponent(new TransformComponent({ 20,70.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto scoreCounter = new dae::TextComponent("Score: 0", font);
+		scoreDisplay->AddComponent(scoreCounter);
+
+		scene.Add(scoreDisplay);
+	}
+	{
+		auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer1");
+		livesDisplay->AddComponent(new TransformComponent({ 20.0f ,90.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
+		livesDisplay->AddComponent(livesCounter);
+
+		scene.Add(livesDisplay);
+	}
+	if (scene.GetGameMode() == dae::GameMode::CoOp)
+	{
 		{
-			auto coily = std::make_shared<GameObject>("Player2");
 
-			SDL_Rect srcRect = { 0,32,16,32 };
-			const dae::Vector2 srcRectHalf = { 8,16 };
-			coily->AddComponent(new RenderComponent(srcRect));
-			coily->SetTexture("Textures/Qbert2.png");
+			auto player2HUD = std::make_shared<GameObject>("HUDPlayer2");
+			player2HUD->AddComponent(new TransformComponent({ 20,120.0f,10 }, 1.0f));
 
-			const Vector3 pos = { (m_WindowSurface->w / 2 + srcRectHalf.x) + 96, (m_WindowSurface->h / 2 - srcRectHalf.y) + 144,6 };
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			player2HUD->AddComponent(new dae::TextComponent("Player2", font));
 
-			coily->AddComponent(new TransformComponent(pos, 1.0f));
+			scene.Add(player2HUD);
+		}
+		{
+			auto scoreDisplay = std::make_shared<GameObject>("ScoreDisplayPlayer2");
+			scoreDisplay->AddComponent(new TransformComponent({ 20,140.0f,10 }, 1.0f));
 
-			coily->AddComponent(new HealthComponent(3));
-			coily->AddComponent(new MoveComponent(6));
-			coily->AddComponent(new ControlComponent(pos));
-			coily->AddTag(dae::Tag::Coily);
-			CollisionManager::GetInstance().AddCollider(coily);
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto scoreCounter = new dae::TextComponent("Score: 0", font);
+			scoreDisplay->AddComponent(scoreCounter);
 
-			scene.AddPlayer(coily);
+			scene.Add(scoreDisplay);
+		}
+		{
+			auto livesDisplay = std::make_shared<GameObject>("LivesDisplayPlayer2");
+			livesDisplay->AddComponent(new TransformComponent({ 20.0f ,160.0f,10 }, 1.0f));
+
+			auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+			auto livesCounter = new dae::TextComponent("Remaining lives: 3", font);
+			livesDisplay->AddComponent(livesCounter);
+
+			scene.Add(livesDisplay);
 		}
 	}
 	{
-		auto playerDiedPopup = std::make_shared<GameObject>("PlayerDiedPopup");
-		playerDiedPopup->AddComponent(new TransformComponent());
-		playerDiedPopup->AddComponent(new TimerComponent());
-		playerDiedPopup->SetEnabled(false);
-		playerDiedPopup->SetPosition(400, 400, 10);
-		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
-		auto textComp = new dae::TextComponent("Player died", font);
-		playerDiedPopup->AddComponent(textComp);
+		auto levelDisplay = std::make_shared<GameObject>("LevelDisplay");
+		levelDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w -100.0f ,100.0f,10 }, 1.0f));
 
-		scene.Add(playerDiedPopup);
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto levelCounter = new dae::TextComponent("Level: 1", font);
+		levelDisplay->AddComponent(levelCounter);
+
+		scene.Add(levelDisplay);
+	}
+	{
+		auto roundDisplay = std::make_shared<GameObject>("RoundDisplay");
+		roundDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w - 100.0f ,130.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto roundCounter = new dae::TextComponent("Round: 1", font);
+		roundDisplay->AddComponent(roundCounter);
+
+		scene.Add(roundDisplay);
+	}
+	{
+		auto pausedDisplay = std::make_shared<GameObject>("PauseDisplay");
+		pausedDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w/2 - 30.0f ,m_WindowSurface->h/2 - 10.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 30);
+		auto pausedText = new dae::TextComponent("Paused", font);
+
+		pausedDisplay->AddComponent(pausedText);
+		pausedDisplay->SetEnabled(false);
+		scene.Add(pausedDisplay);
+	}
+	{
+		auto gameOverDisplay = std::make_shared<GameObject>("GameOverDisplay");
+		gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 40.0f ,m_WindowSurface->h / 2 - 10.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 30);
+		auto gameOverText = new dae::TextComponent("Game Over", font);
+
+		gameOverDisplay->AddComponent(gameOverText);
+		gameOverDisplay->SetEnabled(false);
+		scene.Add(gameOverDisplay);
+	}
+	{
+		auto gameOverDisplay = std::make_shared<GameObject>("PressToRestart");
+		gameOverDisplay->AddComponent(new TransformComponent({ m_WindowSurface->w / 2 - 100.0f ,m_WindowSurface->h / 2 + 20.0f,10 }, 1.0f));
+
+		auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 20);
+		auto gameOverText = new dae::TextComponent("Press start or = to restart", font);
+
+		gameOverDisplay->AddComponent(gameOverText);
+		gameOverDisplay->SetEnabled(false);
+		scene.Add(gameOverDisplay);
 	}
 }
 
+void Minigin::LoadSceneByGameMode(dae::GameMode gamemode) const
+{
+	if (gamemode == dae::GameMode::SinglePlayer)
+		LoadSinglePlayerScene();
+	else if (gamemode == dae::GameMode::CoOp)
+		LoadCoOpScene();
+	else if (gamemode == dae::GameMode::Versus)
+		LoadVersusScene();
+}
 
 void Minigin::LoadGame() const
 {
@@ -489,6 +466,7 @@ void Minigin::LoadGame() const
 	//LoadCoOpScene();
 	//LoadVersusScene();
 	LoadSinglePlayerScene();
+
 }
 
 void Minigin::Cleanup()
@@ -523,7 +501,8 @@ void Minigin::Run()
 	bool doContinue = true;
 	auto lastTime = high_resolution_clock::now();
 	float lag = 0.0f;
-
+	m_Paused = false;
+	m_GameOver = false;
 	std::thread audioThread(&SoundSystem::Update, &ServiceLocator::GetSoundSystem());
 
 	while (doContinue)
@@ -538,9 +517,13 @@ void Minigin::Run()
 
 		while (lag >= MsPerUpdate)
 		{
-			sceneManager.Update(deltaTime);
-			enemyManager.Update(deltaTime);
-			collisionManager.Update(deltaTime);
+			if (!m_Paused && !m_GameOver)
+			{
+				sceneManager.Update(deltaTime);
+				enemyManager.Update(deltaTime);
+				collisionManager.Update(deltaTime);
+			}
+
 			lag -= MsPerUpdate;
 		}
 
@@ -556,20 +539,18 @@ void Minigin::Run()
 	Cleanup();
 }
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// PLAYER EN MAP CLASS MAKEN MET EEN Gameobject variabel.
-// Ze apart Updaten
-// 
-// glm::vector2 naar vector2Ints maken
-// 
-// 
-// UIS FIXEN
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//! //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void Minigin::ClearGame()
+{
+	EnemyManager::GetInstance().Reset();
+	CollisionManager::GetInstance().ClearColliders();
+
+	auto& sceneManager = dae::SceneManager::GetInstance();
+	auto scene = sceneManager.GetCurrentScene();
+	scene->ClearObjects();
+	m_GameOver = false;
+	m_Paused = false;
+	dae::GameMode gamemode = scene->GetGameMode();
+	sceneManager.RemoveCurrentScene();
+
+	LoadSceneByGameMode(gamemode);
+}

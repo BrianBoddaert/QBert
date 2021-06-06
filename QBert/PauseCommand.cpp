@@ -2,13 +2,27 @@
 #include <iostream>
 #include "PauseCommand.h"
 
-// TEMP
+#include "Minigin.h"
 #include "AudioClasses.h"
+#include "EnemyManager.h"
+#include "CollisionManager.h"
 
 void dae::PauseCommand::Execute(const int&)
 {
-	std::cout << "Pause" << std::endl;
-	ServiceLocator::GetSoundSystem().TogglePause();
+	if (Minigin::GetInstance().GetGameOver())
+	{
+		Minigin::GetInstance().ClearGame();
+	}
+	else
+	{
+		bool paused = !Minigin::GetInstance().GetPaused();
+		Minigin::GetInstance().SetPaused(paused);
+		ServiceLocator::GetSoundSystem().TogglePause();
+		SceneManager::GetInstance().GetCurrentScene()->GetObjectByName("PauseDisplay")->SetEnabled(paused);
+	}
+
+	
+	//InputManager::GetInstance().LockInput(!InputManager::GetInstance().GetInputLocked());
 }
 
 void dae::PauseCommand::Release(const int&)

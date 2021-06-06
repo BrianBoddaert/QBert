@@ -11,6 +11,7 @@ public:
     virtual void Jump(float deltaT) = 0;
     virtual void FallToDeath(float deltaT) = 0;
     bool IsMoving() const { return m_IsMoving;}
+    void SetIsMoving(bool v) { m_IsMoving = v; };
     virtual void Update(float deltaT) override = 0;
 
     void SetCurrentCubeIndex(int index) { m_CurrentCubeIndex = index; };
@@ -38,5 +39,7 @@ protected:
 
     float m_JumpCooldownTimer;
     float m_JumpCooldown;
+    float m_EnemyJumpCooldownMultiplier;
+    float m_JumpHeightUpMultiplier;
 };
 

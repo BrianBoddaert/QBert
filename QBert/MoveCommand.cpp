@@ -12,7 +12,10 @@ void MoveCommand::Execute(const int& dir)
 	if (m_ControllerIndex == -1)
 		playerIndex = 0;
 
-	auto player = dae::SceneManager::GetInstance().GetCurrentScene().get()->GetPlayer(playerIndex);
+
+	auto player = dae::SceneManager::GetInstance().GetCurrentScene()->GetPlayer(playerIndex);
+	if (!player)
+		return;
 	const auto& controlComp = player.get()->GetComponent<ControlComponent>();
 	controlComp->SetMoveInput(MoveInputDirections(dir), true);
 }
@@ -25,6 +28,9 @@ void MoveCommand::Release(const int& dir)
 		playerIndex = 0;
 
 	auto player = dae::SceneManager::GetInstance().GetCurrentScene().get()->GetPlayer(playerIndex);
+	if (!player)
+		return;
+
 	const auto& controlComp = player.get()->GetComponent<ControlComponent>();
 	controlComp->SetMoveInput(MoveInputDirections(dir), false);
 }

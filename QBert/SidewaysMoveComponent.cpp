@@ -8,6 +8,7 @@
 #include "RenderComponent.h"
 #include "HealthComponent.h"
 #include "Cube.h"
+#include "InputManager.h"
 
 using namespace dae;
 
@@ -25,14 +26,13 @@ void SidewaysMoveComponent::Update(float deltaT)
 	else
 		m_JumpCooldownTimer += deltaT;
 	
-	if (m_JumpCooldownTimer >= m_JumpCooldown)
+	if (m_JumpCooldownTimer >= m_JumpCooldown * m_EnemyJumpCooldownMultiplier)
 	{
 		m_JumpCooldownTimer = 0;
 		ActivateJump(RandomizeDirection());
 
 	}
 }
-
 
 void SidewaysMoveComponent::CorrectPosition() 
 {
@@ -50,7 +50,6 @@ void SidewaysMoveComponent::CorrectPosition()
 	{
 		m_pGameObject->GetComponent<TransformComponent>()->SetPosition(Vector2(cubePos.x + srcRect.w/2 - srcRectCube.w / 4, cubePos.y + srcRect.h/2 + srcRectCube.h / 4));
 	}
-
 
 }
 
@@ -77,8 +76,9 @@ const dae::DirectionSprite SidewaysMoveComponent::RandomizeDirection() const
 
 void SidewaysMoveComponent::ActivateJump(const DirectionSprite& dir)
 {
+	if (InputManager::GetInstance().GetInputLocked())
+		return;
 
-	// CAN BE IN BASE CLASS ITS THE SAME SO FAR <<<<
 	m_Direction = dir;
 	ServiceLocator::GetSoundSystem().QueueSound(EffectId::Jump, 0.1f);
 

@@ -11,6 +11,9 @@ public:
 	void SpawnSlickSam();
 	void ClearEnemies();
 	void RemoveEnemyByName(const std::string& Enemy);
+	void ResetTimer();
+	void Reset();
+	
 private:
 	friend class dae::Singleton<EnemyManager>;
 

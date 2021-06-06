@@ -10,7 +10,6 @@
 
 int main(int, char* []) //
 {
-	Minigin game;
-	game.Run();
+	Minigin::GetInstance().Run();
 	return 0;
 }

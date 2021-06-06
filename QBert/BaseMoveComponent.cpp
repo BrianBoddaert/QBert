@@ -14,7 +14,9 @@ BaseMoveComponent::BaseMoveComponent(int tileIndex)
     , m_FallingToDeath{ false }
     , m_Direction{ dae::DirectionSprite::DownLeft }
     , m_JumpCooldownTimer{ 0 }
-    , m_JumpCooldown{ 0.5f }
+    , m_JumpCooldown{ 0.15f }
+    , m_EnemyJumpCooldownMultiplier{ 2.0f }
+    , m_JumpHeightUpMultiplier{ 1.5f }
 {
     const dae::Vector2& cubeOffset = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->GetCubeOffset();
     m_MoveDistance = cubeOffset * GAMESCALE;

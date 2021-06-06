@@ -17,7 +17,7 @@ Cube::Cube(int id)
 	m_pGameObject = std::make_shared<GameObject>(("Cube" + std::to_string(id)));
 }
 
-void Cube::SetActivated(bool activate)
+bool Cube::SetActivated(bool activate)
 {
 	MapComponent* CurrentMap = SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>();
 
@@ -28,6 +28,7 @@ void Cube::SetActivated(bool activate)
 			m_Activated = activate;
 			SetColorNext(activate);
 			SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+			return true;
 		}
 		else if (!activate && m_Activated)
 		{
@@ -47,6 +48,7 @@ void Cube::SetActivated(bool activate)
 			m_Activated = activate;
 			SetColorNext(activate);
 			SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+			return true;
 		}
 		else if (!activate && m_IntermediateActivated)
 		{
@@ -71,6 +73,7 @@ void Cube::SetActivated(bool activate)
 			{
 				SetColorNext(true);
 				SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
+				return true;
 			}
 
 			else if (!m_Activated)
@@ -83,6 +86,8 @@ void Cube::SetActivated(bool activate)
 			SetColorNext(activate);
 		}
 	}
+
+	return false;
 }
 
 void Cube::SetColorNext(bool next) // next or previous
