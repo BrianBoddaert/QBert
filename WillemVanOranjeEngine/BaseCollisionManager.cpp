@@ -25,6 +25,14 @@ void BaseCollisionManager::Update(float)
 
 }
 
+void BaseCollisionManager::RemoveColliderByObject(const std::shared_ptr<GameObject>& obj)
+{
+	for (size_t i = 0; i < m_pColliders.size(); i++)
+	{
+		if (m_pColliders[i] == obj)
+			m_pColliders.erase(m_pColliders.begin() + i);
+	}
+}
 void BaseCollisionManager::AddCollider(const std::shared_ptr<GameObject>& gameObject)
 {
 	if (gameObject->HasTag(dae::Tag::Player))
@@ -43,7 +51,7 @@ bool BaseCollisionManager::IsColliding(std::shared_ptr<GameObject> player, std::
 	const Vector2 size1 = player->GetComponent<RenderComponent>()->GetSpritePixelSize();
 	const Vector3 pos2 = collider->GetComponent<TransformComponent>()->GetPosition();
 	const Vector2 size2 = collider->GetComponent<RenderComponent>()->GetSpritePixelSize();
-	const Vector2 TriggerOffset = { -15,-15 };
+	const Vector2 TriggerOffset = { -(size2.x/2),-(size2.y/2) };
 
 	if (pos1.x + size1.x + TriggerOffset.x >= pos2.x && pos1.y + size1.y + TriggerOffset.y >= pos2.y && !(pos1.x > pos2.x + size2.x + TriggerOffset.x) && !(pos1.y > pos2.y + size2.y + TriggerOffset.y))
 	{
@@ -65,7 +73,7 @@ void BaseCollisionManager::RemoveCollidersByTag(const dae::Tag& tag)
 			m_pColliders.erase(m_pColliders.begin() + i);
 	}
 }
-void BaseCollisionManager::RemoveObjectsByName(const std::string& name)
+void BaseCollisionManager::RemoveCollidersByName(const std::string& name)
 {
 	for (size_t i = 0; i < m_pColliders.size(); i++)
 	{

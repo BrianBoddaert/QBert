@@ -12,10 +12,10 @@ namespace dae
 		void Update(float deltaT);
 		void AddCollider(const std::shared_ptr<GameObject>& gameObject);
 
+		void RemoveColliderByObject(const std::shared_ptr<GameObject>& obj);
 		void RemoveCollidersByTag(const dae::Tag& tag);
-		void RemoveObjectsByName(const std::string& name);
+		void RemoveCollidersByName(const std::string& name);
 	protected:
-	//	friend class dae::Singleton<BaseCollisionManager>;
 
 		bool IsColliding(std::shared_ptr<GameObject> obj1, std::shared_ptr<GameObject> obj2);
 		virtual void CollisionEffect(std::shared_ptr<GameObject> player, std::shared_ptr<GameObject> collider) = 0;

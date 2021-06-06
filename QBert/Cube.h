@@ -31,6 +31,10 @@ public:
 	void SetColor(const CubeColor& color);
 
 	bool GetActivated() const { return m_Activated; };
+
+	bool GetNextToDisc() const { return m_NextToDisc; }
+	void SetNextToDisc(bool v) { m_NextToDisc = v; }
+
 private:
 
 	CubeColor m_CurrentColor;
@@ -38,6 +42,7 @@ private:
 
 	bool m_Activated;
 	bool m_IntermediateActivated;
+	bool m_NextToDisc;
 	const int m_Id;
 };
 

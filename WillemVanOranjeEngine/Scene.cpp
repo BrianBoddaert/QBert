@@ -113,6 +113,15 @@ void Scene::RemoveObjectsByTag(const dae::Tag& tag)
 	}
 }
 
+void Scene::RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj)
+{
+	for (size_t i = 0; i < m_Objects.size(); i++)
+	{
+		if (m_Objects[i] == obj)
+			m_Objects.erase(m_Objects.begin() + i);
+	}
+}
+
 void Scene::RemoveObjectsByName(const std::string& name)
 {
 	for (size_t i = 0; i < m_Objects.size(); i++)

@@ -23,6 +23,7 @@
     <ClInclude Include="BaseMoveComponent.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="Disc.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="HealthComponent.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="BaseMoveComponent.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Disc.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
     <ClCompile Include="HealthComponent.cpp" />

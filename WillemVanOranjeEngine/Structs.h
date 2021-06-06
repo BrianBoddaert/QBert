@@ -33,7 +33,7 @@ namespace dae
 	};
 
 	Vector3 operator-(const Vector3& a, const Vector3& b);
-
+	bool operator==(const Vector3& a, const Vector3& b);
 	Vector3 operator*(const Vector3& a, float scalar);
 	Vector2 operator-(const Vector2& a, const Vector2& b);
 

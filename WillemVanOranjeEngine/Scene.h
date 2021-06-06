@@ -38,12 +38,13 @@ namespace dae
 		std::shared_ptr<GameObject> GetCurrentMap() const;
 		const std::vector< std::shared_ptr<GameObject>>& GetPlayers() const {return m_pPlayers;}
 		void RemoveObjectsByTag(const dae::Tag& tag);
-		const GameMode& GetGameMode() const { return m_GameMode; };
 		void RemoveObjectsByName(const std::string& name);
+		void RemoveObjectsByObject(const std::shared_ptr<GameObject>& obj);
+		const GameMode& GetGameMode() const { return m_GameMode; };
+
 		void SortOnZAxis();
 	private: 
 		explicit Scene(const std::string& name, const GameMode& gameMode);
-	//	bool CompareZAxis(const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b);
 		const GameMode m_GameMode;
 		const std::string m_Name;
 		std::vector< std::shared_ptr<GameObject>> m_pPlayers{};

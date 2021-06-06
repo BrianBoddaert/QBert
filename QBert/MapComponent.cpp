@@ -9,6 +9,8 @@
 #include "SceneManager.h"
 #include "InputManager.h"
 #include "TxtLoader.h"
+#include "CollisionManager.h"
+
 //Static variables Init
 
 using namespace dae;
@@ -44,6 +46,7 @@ MapComponent::MapComponent(Scene& scene, const dae::Vector3& highestCubePos)
 	}
 
 
+	srand(unsigned int(time(NULL)));
 	m_CubeOffset.x *= GAMESCALE;
 	m_CubeOffset.y *= GAMESCALE;
 	Initialize(scene);
@@ -60,7 +63,7 @@ void MapComponent::LoadMap(dae::Scene& scene)
 		dae::Vector2 pos = m_HighestCubePos + cubePositions[i];
 		CreateCube(i, dae::Vector3(pos.x, pos.y, 0), scene);
 	}
-
+	SpawnDiscs();
 }
 
 void MapComponent::Initialize(Scene& scene)
@@ -286,7 +289,33 @@ void MapComponent::Update(float deltaT)
 		cube->Update(deltaT);
 	}
 
+	for (size_t i = 0; i < m_Discs.size(); i++)
+	{
+		m_Discs[i]->Update(deltaT);
 
+		if (m_Discs[i]->GetMarkedForDelete())
+		{
+			dae::SceneManager::GetInstance().GetCurrentScene()->RemoveObjectsByObject(m_Discs[i]->GetGameObject());
+			CollisionManager::GetInstance().RemoveColliderByObject(m_Discs[i]->GetGameObject());
+			m_Discs.erase(m_Discs.begin() + i);
+		}
+	}
+
+}
+
+void MapComponent::MovePlayerToSpawn(const std::string& name)
+{
+	auto scene = SceneManager::GetInstance().GetCurrentScene();
+	auto player = scene->GetObjectByName(name);
+	TransformComponent* transformComp = player->GetComponent<TransformComponent>();
+	MoveComponent* moveComp = player->GetComponent<MoveComponent>();
+	ControlComponent* playerComp = player->GetComponent<ControlComponent>();
+	moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
+	if (transformComp)
+	{
+		const auto& playerSpawn = playerComp->GetSpawnPosition();
+		transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
+	}
 }
 
 void MapComponent::NextMap()
@@ -297,42 +326,16 @@ void MapComponent::NextMap()
 	m_LevelFinishedColorChangeCount = 0;
 	auto scene = SceneManager::GetInstance().GetCurrentScene();
 
+	SpawnDiscs();
+
 	if (scene->GetGameMode() == GameMode::SinglePlayer || scene->GetGameMode() == GameMode::Versus)
 	{
-		auto player = scene->GetPlayer(0);
-		TransformComponent* transformComp = player->GetComponent<TransformComponent>();
-		MoveComponent* moveComp = player->GetComponent<MoveComponent>();
-		ControlComponent* playerComp = player->GetComponent<ControlComponent>();
-		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
-		if (transformComp)
-		{
-			const auto& playerSpawn = playerComp->GetSpawnPosition();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
-		}
+		MovePlayerToSpawn("Player1");
 	}
 	else if (scene->GetGameMode() == GameMode::CoOp)
 	{
-		auto player1 = scene->GetPlayer(0);
-		TransformComponent* transformComp = player1->GetComponent<TransformComponent>();
-		MoveComponent* moveComp = player1->GetComponent<MoveComponent>();
-		ControlComponent* playerComp = player1->GetComponent<ControlComponent>();
-		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
-		if (transformComp)
-		{
-			const auto& playerSpawn = playerComp->GetSpawnPosition();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
-		}
-
-		auto player2 = scene->GetPlayer(1);
-		transformComp = player2->GetComponent<TransformComponent>();
-		moveComp = player2->GetComponent<MoveComponent>();
-		playerComp = player2->GetComponent<ControlComponent>();
-		moveComp->SetCurrentCubeIndex(moveComp->GetStartCubeIndex());
-		if (transformComp)
-		{
-			const auto& playerSpawn = playerComp->GetSpawnPosition();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
-		}
+		MovePlayerToSpawn("Player1");
+		MovePlayerToSpawn("Player2");
 	}
 
 	for (const auto& cube : m_Cubes)
@@ -352,7 +355,76 @@ void MapComponent::Render(const dae::Vector2&, const dae::Vector2&) const
 	}
 }
 
+void MapComponent::SpawnDiscs()
+{
+	for (size_t i = 0; i < m_MaxCubes; i++)
+	{
+		m_Cubes[i]->SetNextToDisc(false);
+	}
+	for (size_t i = 0; i < m_Discs.size(); i++)
+	{
+		m_Discs[i]->SetMarkedForDelete(true);
+	}
+
+	float offsetFromTheSide = 10;
+
+	int leftSideCubeIndex = m_MostLeftBlocks[rand() % 5 + 2];
+	int rightSideCubeIndex = m_MostRightBlocks[rand() % 4 + 2];
+
+	Vector3 disc1Pos = m_Cubes[leftSideCubeIndex]->GetGameObject()->GetComponent<TransformComponent>()->GetPosition();
+	Vector3 disc2Pos = m_Cubes[rightSideCubeIndex]->GetGameObject()->GetComponent<TransformComponent>()->GetPosition();
+
+	disc1Pos.y -= offsetFromTheSide;
+	disc2Pos.y -= offsetFromTheSide;
+	disc1Pos.x -= offsetFromTheSide;
+	disc2Pos.x += m_Cubes[rightSideCubeIndex]->GetGameObject()->GetComponent<RenderComponent>()->GetSrcRect().w/2 + offsetFromTheSide;
+
+	m_Cubes[leftSideCubeIndex]->SetNextToDisc(true);
+	m_Cubes[rightSideCubeIndex]->SetNextToDisc(true);
+
+	CreateDisc(disc1Pos, *dae::SceneManager::GetInstance().GetCurrentScene());
+	CreateDisc(disc2Pos, *dae::SceneManager::GetInstance().GetCurrentScene());
+
+
+}
+
+std::shared_ptr<Disc> MapComponent::GetDiscByGameObject(const std::shared_ptr<dae::GameObject>& go) const
+{
+	for (size_t i = 0; i < m_Discs.size(); i++)
+	{
+		if (m_Discs[i]->GetGameObject() == go)
+		{
+			return m_Discs[i];
+		}
+	}
+
+	return nullptr;
+}
+void MapComponent::CreateDisc(const Vector3& pos, Scene& scene)
+{
+	Vector2 discSrcRect{16,16};
+	m_Discs.push_back(std::make_shared<Disc>(m_Cubes[0]->GetGameObject()->GetComponent<TransformComponent>()->GetPosition(), discSrcRect));
+	m_Discs[m_Discs.size() - 1]->GetGameObject()->AddTag(dae::Tag::Disc);
+	auto newDisc = m_Discs[m_Discs.size() - 1]->GetGameObject();
+
+	newDisc->AddComponent(new TransformComponent(pos,1));
+	//0,352 16x16
+	SDL_Rect srcRect = { 0,352,16,16 };
+
+	newDisc->AddComponent(new RenderComponent(srcRect));
+	newDisc->SetTexture("Textures/Qbert2.png");
+	
+	CollisionManager::GetInstance().AddCollider(newDisc);
+	scene.Add(newDisc);
+}
+
 const dae::Vector2& MapComponent::GetCubeOffset() const
 {
 	return m_CubeOffset;
+}
+
+
+bool MapComponent::DoesCubeHaveDiscNextToIt(int cubeIndex) const
+{
+	return m_Cubes[cubeIndex]->GetNextToDisc();
 }

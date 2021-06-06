@@ -20,12 +20,19 @@ void PathFindingComponent::Update(float)
 
 	if (moveComp->IsMoving() || InputManager::GetInstance().GetInputLocked())
 		return;
-	DirectionSprite currentSprite = FindDirectionToClosestPlayer();
 
-	if (currentSprite == DirectionSprite::DownRight)
-		return;
 
-	moveComp->ActivateJump(currentSprite);
+	if (m_pGameObject->HasTag(dae::Tag::Coily))
+	{
+		DirectionSprite currentSprite = FindDirectionToClosestPlayer();
+
+		if (currentSprite == DirectionSprite::DownRight)
+			return;
+
+		moveComp->ActivateJump(currentSprite);
+	}
+	if (m_pGameObject->HasTag(dae::Tag::SlickSam))
+	{
 
 
 }

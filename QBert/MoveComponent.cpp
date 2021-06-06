@@ -58,8 +58,16 @@ void MoveComponent::ActivateJump(const DirectionSprite& dir)
     if (!isOnMap)
     {
         // Player jumped off the map
-        ServiceLocator::GetSoundSystem().QueueSound(EffectId::Fall, 0.1f);
-        m_FallingToDeath = true;
+        if (CurrentMap->DoesCubeHaveDiscNextToIt(m_CurrentCubeIndex))
+        {
+            m_JumpingOnDisc = true;
+        }
+        else
+        {
+            ServiceLocator::GetSoundSystem().QueueSound(EffectId::Fall, 0.1f);
+            m_FallingToDeath = true;
+        }
+
     }
 
 
@@ -205,8 +213,74 @@ void MoveComponent::Update(float deltaT)
 
     if (m_FallingToDeath)
         FallToDeath(deltaT);
+    else if (m_JumpingOnDisc)
+        JumpOnDisc(deltaT);
     else if (m_IsMoving)
         Jump(deltaT);
     else if (m_pGameObject->HasTag(dae::Tag::Coily))
         m_JumpCooldownTimer += deltaT;
+}
+
+
+void MoveComponent::JumpOnDisc(float deltaT)
+{
+    const auto& transform = m_pGameObject->GetComponent<TransformComponent>();
+
+    if (!m_pDiscTransform)
+    {
+        if (m_IsOnDisc)
+        {
+            dae::SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn(m_pGameObject->GetName());
+            m_CurrentCubeIndex = 0;
+            m_IsOnDisc = false;
+            m_JumpingOnDisc = false;
+            m_FallingToDeath = false;
+            m_IsMoving = false;
+        }
+        else
+        {
+
+            Vector3 pos = transform->GetPosition();
+
+            const float moveDistRatio = (m_MoveDistance.y / m_MoveDistance.x);
+
+            float jumpHeight = m_MoveDistance.y / 2.0f;
+
+            const Vector2 speed = { m_Speed,m_Speed * moveDistRatio * (m_MoveDistance.y / jumpHeight) };
+
+            if (m_Direction == dae::DirectionSprite::DownRightJump || m_Direction == dae::DirectionSprite::UpRightJump)
+                pos.x += deltaT * speed.x;
+            else
+                pos.x -= deltaT * speed.x;
+
+            jumpHeight = m_MoveDistance.y * 1.5f;
+
+            if (m_FirstHalfOfTheJump)
+            {
+                pos.y -= deltaT * speed.y;
+
+                if (abs(pos.y - m_JumpStartPos.y) > jumpHeight)
+                    m_FirstHalfOfTheJump = false;
+            }
+            else pos.y += deltaT * speed.y;
+
+            if (pos.y > 720)
+            {
+                m_IsMoving = false;
+                m_FallingToDeath = false;
+            }
+            else transform->SetPosition(Vector3(pos.x, pos.y, 0));
+        }
+
+    }
+    else
+    {
+        m_IsOnDisc = true;
+        Vector3 newPos = m_pDiscTransform->GetPosition();
+        newPos.x += GAMESCALE * 1.f;
+        newPos.y -= GAMESCALE * 13.f;
+        transform->SetPosition(newPos);
+    }
+
+
 }

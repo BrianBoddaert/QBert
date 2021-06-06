@@ -199,7 +199,7 @@ void Minigin::LoadSinglePlayerScene() const
 
 		auto player = std::make_shared<GameObject>("Player1");
 		const dae::Vector2 playerHalfSize = { 8,8 };
-		const dae::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,0 };
+		const dae::Vector3 playerPos = { m_WindowSurface->w / 2 + playerHalfSize.x, m_WindowSurface->h / 2 - playerHalfSize.y,1 };
 		ControlComponent* controlComponent = new ControlComponent(playerPos);  // ControlComponent();
 
 		player->AddComponent(controlComponent);
@@ -220,6 +220,7 @@ void Minigin::LoadSinglePlayerScene() const
 		player->AddComponent(new MoveComponent(0));
 		player->AddTag(dae::Tag::Player);
 		player->AddTag(dae::Tag::Player1);
+		CollisionManager::GetInstance().AddCollider(player);
 		scene.AddPlayer(player);
 	}
 	{
@@ -297,7 +298,7 @@ void Minigin::LoadCoOpScene() const
 			auto player = std::make_shared<GameObject>("Player1");
 
 			const dae::Vector2 playerHalfSize = { 8,8 };
-			const dae::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) - 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,6 };
+			const dae::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) - 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,7 };
 
 			ControlComponent* controlComponent = new ControlComponent(playerPos);
 
@@ -330,7 +331,7 @@ void Minigin::LoadCoOpScene() const
 			player->AddComponent(new RenderComponent(playerSrcRect));
 			player->SetTexture("Textures/Qbert2.png");
 			//const dae::Vector2& cubeOffset =  mapComp->GetCubeOffset();
-			const dae::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) + 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,6 };
+			const dae::Vector3 playerPos = { (m_WindowSurface->w / 2 + playerHalfSize.x) + 96, (m_WindowSurface->h / 2 - playerHalfSize.y) + 144,7 };
 			ControlComponent* controlComponent = new ControlComponent(playerPos);
 
 			player->AddComponent(controlComponent);
@@ -485,8 +486,8 @@ void Minigin::LoadVersusScene() const
 void Minigin::LoadGame() const
 {
 
-	LoadCoOpScene();
-	LoadVersusScene();
+	//LoadCoOpScene();
+	//LoadVersusScene();
 	LoadSinglePlayerScene();
 }
 

@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include "ControlComponent.h"
 #include "Cube.h"
-
+#include "Disc.h"
 
 class MapComponent final : public dae::Component
 {
@@ -26,6 +26,10 @@ public:
 	bool LevelCompleteCheck() const;
 	void SetLevelFinished(bool value) { m_LevelFinished = value; }
 	const Level& GetCurrentLevel() const { return m_CurrentLevel; };
+	void MovePlayerToSpawn(const std::string& name);
+	bool DoesCubeHaveDiscNextToIt(int cubeIndex) const;
+	std::shared_ptr<Disc> GetDiscByGameObject(const std::shared_ptr<dae::GameObject>& go) const;
+
 private:
 	void Initialize(dae::Scene& scene);
 	void LoadMap(dae::Scene& scene);
@@ -34,6 +38,9 @@ private:
 	int GetRowNumber(const int& currentTileIndex) const;
 	int GetColumnNumber(const int& currentTileIndex) const;
 	int GetZNumber(const int& currentTileIndex) const;
+	void CreateDisc(const dae::Vector3& pos, dae::Scene& scene);
+	void SpawnDiscs();
+
 
 private:
 	void NextMap();
@@ -50,7 +57,7 @@ private:
 	int m_MostRightBlocks[m_SideLength];
 	int m_LowestBlocks[m_SideLength];
 	std::shared_ptr<Cube> m_Cubes[m_MaxCubes];
-
+	std::vector<std::shared_ptr<Disc>> m_Discs;
 	bool m_LevelFinished;
 	float m_TileColorFlashTimer;
 	float m_TileColorFlashDuration;

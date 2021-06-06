@@ -9,7 +9,9 @@ namespace dae
 		Player2,
 		Player,
 		Coily,
-		WrongWay
+		WrongWay,
+		Disc,
+		SlickSam
 	};
 
 	class SceneObject

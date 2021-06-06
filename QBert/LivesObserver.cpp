@@ -10,6 +10,8 @@
 #include "ControlComponent.h"
 #include "TransformComponent.h"
 #include "MoveComponent.h"
+#include "MapComponent.h"
+
 void dae::LivesObserver::OnNotify(const GameObject* actor, Event event)
 {
 	if (event == Event::ActorDied)
@@ -24,33 +26,15 @@ void dae::LivesObserver::Unlock(const GameObject* actor)
 	if (actor->HasTag(dae::Tag::Player1))
 	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer1");
-		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
-		if (transformComp)
-		{
-			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetSpawnPosition();
-
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
-		}
-		else
-		{
-			std::cout << "WARNING: transformComp not found on player after player death" << std::endl;
-		}
+		SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player1");
+		
 	}
 
 
 	if (actor->HasTag(dae::Tag::Player2))
 	{
 		livesDisplay = SceneManager::GetInstance().GetCurrentScene().get()->GetObjectByName("LivesDisplayPlayer2");
-		TransformComponent* transformComp = actor->GetComponent<TransformComponent>();
-		if (transformComp)
-		{
-			const auto& playerSpawn = actor->GetComponent<ControlComponent>()->GetSpawnPosition();
-			transformComp->SetPosition(playerSpawn.x, playerSpawn.y, playerSpawn.z);
-		}
-		else
-		{
-			std::cout << "WARNING: transformComp not found on player after player death" << std::endl;
-		}
+		SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->GetComponent<MapComponent>()->MovePlayerToSpawn("Player2");
 	}
 
 	auto moveComp = actor->GetComponent<MoveComponent>();

@@ -15,7 +15,7 @@ using namespace dae;
 
 EnemyManager::EnemyManager()
 	: m_SpawnTimer{0.0f}
-	, m_SpawnEnemyInterval{0.5f}
+	, m_SpawnEnemyInterval{7.5f}
 	, m_CoilyCount{0}
 	, m_WrongWayCount{0}
 {
@@ -110,7 +110,7 @@ void EnemyManager::RemoveEnemyByName(const std::string& name)
 	auto currentScene = SceneManager::GetInstance().GetCurrentScene();
 	auto& collisionManager = CollisionManager::GetInstance();
 	currentScene->RemoveObjectsByName(name);
-	collisionManager.RemoveObjectsByName(name);
+	collisionManager.RemoveCollidersByName(name);
 
 	m_CoilyCount--;
 }
