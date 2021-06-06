@@ -48,10 +48,16 @@ void Cube::SetActivated(bool activate)
 			SetColorNext(activate);
 			SceneManager::GetInstance().GetCurrentScene()->GetCurrentMap()->Notify(dae::Event::ColorChanged);
 		}
-		else if (!activate && m_Activated)
+		else if (!activate && m_IntermediateActivated)
 		{
 			m_Activated = activate;
 			m_IntermediateActivated = activate;
+			SetColorNext(activate);
+		}
+		else if (!activate && m_Activated)
+		{
+			m_Activated = activate;
+			m_IntermediateActivated = true;
 			SetColorNext(activate);
 		}
 	}
@@ -77,12 +83,6 @@ void Cube::SetActivated(bool activate)
 			SetColorNext(activate);
 		}
 	}
-
-
-
-
-
-
 }
 
 void Cube::SetColorNext(bool next) // next or previous

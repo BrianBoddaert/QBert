@@ -18,6 +18,7 @@ EnemyManager::EnemyManager()
 	, m_SpawnEnemyInterval{7.5f}
 	, m_CoilyCount{0}
 	, m_WrongWayCount{0}
+	, m_SlickSamCount{0}
 {
 	srand(unsigned int(time(NULL)));
 }
@@ -29,7 +30,7 @@ void EnemyManager::Update(float deltaT)
 	if (m_SpawnTimer >= m_SpawnEnemyInterval)
 	{
 		m_SpawnTimer = 0.0f;
-		SpawnWrongWay();
+		SpawnSlickSam();
 	}
 }
 
@@ -103,6 +104,44 @@ void EnemyManager::SpawnCoily()
 
 	scene->Add(coily);
 	m_CoilyCount++;
+}
+
+void EnemyManager::SpawnSlickSam()
+{
+	bool SlickOrSam = std::rand() % 2;
+
+
+	auto scene = SceneManager::GetInstance().GetCurrentScene();
+	SDL_Surface* windowSurface = Minigin::GetWindowSurface();
+
+	std::string name = "SlickSam";
+
+	name += std::to_string(m_SlickSamCount);
+	auto coily = std::make_shared<GameObject>(name);
+
+	float srcRectY;
+	if (SlickOrSam)
+		srcRectY = 128;
+	else
+		srcRectY = 144;
+
+	const SDL_Rect srcRect = { 0,128,16,16 };
+	const dae::Vector2 srcRectHalf = { 8,8 };
+	coily->AddComponent(new RenderComponent(srcRect));
+	coily->SetTexture("Textures/Qbert2.png");
+
+	const Vector3 pos = { (windowSurface->w / 2 + srcRectHalf.x), (windowSurface->h / 2 - srcRectHalf.y),0 };
+
+	coily->AddComponent(new TransformComponent(pos, 1.0f));
+
+	coily->AddComponent(new HealthComponent(1));
+	coily->AddComponent(new MoveComponent(0));
+	coily->AddComponent(new PathFindingComponent());
+	coily->AddTag(dae::Tag::SlickSam);
+	CollisionManager::GetInstance().AddCollider(coily);
+
+	scene->Add(coily);
+	m_SlickSamCount++;
 }
 
 void EnemyManager::RemoveEnemyByName(const std::string& name)

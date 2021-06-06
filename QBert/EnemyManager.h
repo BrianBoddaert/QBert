@@ -8,6 +8,7 @@ public:
 	void Update(float deltaT);
 	void SpawnCoily();
 	void SpawnWrongWay();
+	void SpawnSlickSam();
 	void ClearEnemies();
 	void RemoveEnemyByName(const std::string& Enemy);
 private:
@@ -17,5 +18,6 @@ private:
 	float m_SpawnEnemyInterval;
 	int m_CoilyCount;
 	int m_WrongWayCount;
+	int m_SlickSamCount;
 };
 

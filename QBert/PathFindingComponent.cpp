@@ -11,7 +11,7 @@ using namespace dae;
 
 PathFindingComponent::PathFindingComponent()
 {
-
+	srand(unsigned int(time(NULL)));
 }
 
 void PathFindingComponent::Update(float)
@@ -33,8 +33,21 @@ void PathFindingComponent::Update(float)
 	}
 	if (m_pGameObject->HasTag(dae::Tag::SlickSam))
 	{
+		DirectionSprite currentSprite = DescendRandomDirection();
 
+		moveComp->ActivateJump(currentSprite);
+	}
 
+}
+
+dae::DirectionSprite PathFindingComponent::DescendRandomDirection() const
+{
+	bool randomDir = std::rand() % 2;
+
+	if (randomDir)
+		return DirectionSprite::DownLeftJump;
+	else
+		return DirectionSprite::DownRightJump;
 }
 
 dae::DirectionSprite PathFindingComponent::FindDirectionToClosestPlayer() const

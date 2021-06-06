@@ -320,7 +320,7 @@ void MapComponent::MovePlayerToSpawn(const std::string& name)
 
 void MapComponent::NextMap()
 {
-	m_CurrentLevel = Level(int(m_CurrentLevel)+1);
+
 	InputManager::GetInstance().LockInput(false);
 	m_LevelFinished = false;
 	m_LevelFinishedColorChangeCount = 0;
@@ -343,6 +343,7 @@ void MapComponent::NextMap()
 		if (cube)
 			cube->SetActivated(false);
 	}
+	m_CurrentLevel = Level(int(m_CurrentLevel) + 1);
 }
 
 void MapComponent::Render(const dae::Vector2&, const dae::Vector2&) const

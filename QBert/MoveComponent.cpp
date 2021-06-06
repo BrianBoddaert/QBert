@@ -134,7 +134,8 @@ void MoveComponent::Jump(float deltaT)
 
         if (m_pGameObject->HasTag(dae::Tag::Player))
         CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(true);
-
+        if (m_pGameObject->HasTag(dae::Tag::SlickSam))
+            CurrentMap->GetCube(m_CurrentCubeIndex)->SetActivated(false);
         m_IsMoving = false;
     }
     else
